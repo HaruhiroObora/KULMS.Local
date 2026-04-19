@@ -7,3 +7,6 @@ KULMSの授業資料をまとめてダウンロードするためのアプリで
 [MacOS](https://github.com/HaruhiroObora/KULMS.Local/releases/download/v1.0.0-beta/osx-arm64.zip)
 
 [Linux](https://github.com/HaruhiroObora/KULMS.Local/releases/download/v1.0.0-beta/linux-x64.zip)
+
+## インストール手順
+Releasesのリンクからzipをダウンロードして，展開してください．KULMS.Local(.exe)を開けば実行できます．
