@@ -166,30 +166,6 @@ public partial class ContentsTabViewModel : ViewModelBase
         _ = Syncer.DownloadAll(browsedSite, browsedDirectory.DirectoryModel);
     }
 
-    // [RelayCommand]
-    // public async Task DownloadAll()
-    // {
-    //     if (browsedSite is null)
-    //     {
-    //         return;
-    //     }
-    //     List<FileViewModelBase> files = [.. (ICollection<FileViewModelBase>)Files];
-    //     foreach (var f in files)
-    //     {
-    //         if (f is FileViewModel file)
-    //         {
-    //             if (file.DownloadStatus != Status.Offline)
-    //             {
-    //                 await file.Download();
-    //             }
-    //         }
-    //         else if (f is DirectoryViewModel directory)
-    //         {
-    //             await DownloadAll(directory.DirectoryModel);
-    //         }
-    //     }
-    // }
-
     [RelayCommand]
     public void DownloadAll()
     {
