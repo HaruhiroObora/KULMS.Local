@@ -9,9 +9,10 @@ using System.Xml.Linq;
 
 using static KULMS.Local.Services.GlobalSettings;
 // using Microsoft.Playwright;
-using OpenQA.Selenium.Chrome;
+// using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Chrome;
 
 namespace KULMS.Local.Infrastructures;
 
@@ -92,6 +93,7 @@ public class ApiHttpClient
 
     public async Task<bool> SetHttpClientSelenium()
     {
+        var chromeDriver = new ChromeDriver();
         var options = new ChromeOptions
         {
             BinaryLocation = GlobalSetting.Settings.BrowserExecutablePath
