@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:KULMS.Local.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="KULMS.Local.Views.SettingsTab"
+             x:DataType="vm:SettingsTabViewModel">
+
+  <Grid RowDefinitions="*,Auto">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="0">
+      <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+        <TextBlock Text="授業資料の保存先" FontSize="18"/>
+        <TextBox Text="{Binding LocalDirectoryPrefix}" FontSize="13"/>
+        <TextBlock Text="Chromeの実行ファイルパス" FontSize="18"/>
+        <TextBox Text="{Binding BrowserExecutablePath}" FontSize="13"/>
+        <TextBlock Text="LMSのドメイン" FontSize="18"/>
+        <TextBox Text="{Binding Domain}" FontSize="13"/>
+        <TextBlock Text="ID" FontSize="18"/>
+        <TextBox Text="{Binding ID}" FontSize="13"/>
+        <!-- <TextBlock Text="ログインページのパス" FontSize="18"/>
+        <TextBox Text="{Binding LoginPath}" FontSize="13"/>
+        <TextBlock Text="トップページのパス" FontSize="18"/>
+        <TextBox Text="{Binding TopPagePath}" FontSize="13"/>
+        <TextBlock Text="サイト一覧のパス" FontSize="18"/> -->
+      </StackPanel>
+    </ScrollViewer>
+    <Button Content="保存" Command="{Binding SaveSettingsCommand}" HorizontalAlignment="Right"/>
+  </Grid>
+
+
+</UserControl>

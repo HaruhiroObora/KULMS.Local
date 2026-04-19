@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:model="using:KULMS.Local.Models"
+             xmlns:vm="using:KULMS.Local.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="KULMS.Local.Views.FileView"
+             x:DataType="vm:FileViewModel">
+  <Border Padding="0" Margin="0" BorderThickness="1">
+    <Grid ColumnDefinitions="*,Auto,Auto,Auto" Background="Transparent" DoubleTapped="DoubleClicked" Margin="0">
+      <Grid.ContextMenu>
+        <ContextMenu>
+          <MenuItem Header="開く" Command="{Binding OpenCommand}"/>
+          <MenuItem Header="ダウンロード" Command="{Binding DownloadCommand}" />
+        </ContextMenu>
+      </Grid.ContextMenu>
+      <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="0"/>
+      <TextBlock Text="{Binding Type}" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="1"/>
+      <TextBlock Text="{Binding LastModified, StringFormat='yyyy/MM/dd HH:mm'}" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="2"/>
+      <TextBlock Text="{Binding DownloadStatus}" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="3"/>
+    </Grid>
+  </Border>
+</UserControl>
