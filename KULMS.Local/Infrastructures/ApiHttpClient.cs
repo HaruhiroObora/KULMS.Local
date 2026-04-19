@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 
 using static KULMS.Local.Services.GlobalSettings;
-// using Microsoft.Playwright;
-// using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Chrome;
