@@ -93,7 +93,6 @@ public class ApiHttpClient
 
     public async Task<bool> SetHttpClientSelenium()
     {
-        var chromeDriver = new ChromeDriver();
         var options = new ChromeOptions
         {
             BinaryLocation = GlobalSetting.Settings.BrowserExecutablePath
