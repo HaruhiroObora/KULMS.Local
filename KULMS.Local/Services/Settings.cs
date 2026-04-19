@@ -60,7 +60,7 @@ public class Settings
     public string BrowserExecutablePath { get; set; } = GetChromePath() ?? "";
     public string LoginPath { get; set; } = "/portal/login";
     public string TopPagePath { get; set; } = "/portal";
-    public string LocalDirectoryPrefix { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+    public string LocalDirectoryPrefix { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "授業資料");
 
     public static string? GetChromePath()
     {
