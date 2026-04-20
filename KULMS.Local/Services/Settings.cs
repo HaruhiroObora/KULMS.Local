@@ -62,6 +62,8 @@ public class Settings
     public string TopPagePath { get; set; } = "/portal";
     public string LocalDirectoryPrefix { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "授業資料");
 
+    public bool SiteRefresh { get; set; } = true;
+
     public static string? GetChromePath()
     {
         if (OperatingSystem.IsWindows())

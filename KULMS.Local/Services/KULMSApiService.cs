@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using KULMS.Local.Infrastructures;
@@ -20,21 +21,21 @@ public class KULMSApiService
 
     private const int siteLimit = 50;
 
-    private readonly List<SiteModel> sites = [];
+    private List<SiteModel> sites = [];
 
-    private readonly List<DirectoryModel> directories = [];
-    private readonly List<FileModel> files = [];
-
-    private readonly Dictionary<string, string> urlPathToPath = [];
-    private readonly Dictionary<string, string> pathToUrlPath = [];
+    private List<DirectoryModel> directories = [];
+    private List<FileModel> files = [];
 
     private string lastFilesId = string.Empty;
 
     private ApiHttpClient client;
 
+    private CancellationTokenSource cts = new();
+
     private KULMSApiService()
     {
         client = new();
+        StartPeriodicRefresh();
     }
 
     public async Task Login()
@@ -42,43 +43,59 @@ public class KULMSApiService
         LoginStatus = await Task.Run(client.SetHttpClientSelenium);
     }
 
+    public void StartPeriodicRefresh()
+    {
+        _ = PeriodicRefresh(cts.Token);
+    }
+
+    public void StopPeriodicRefresh()
+    {
+        cts.Cancel();
+    }
+
+    private async Task RefreshSites()
+    {
+        List<SiteModel> newSites = [];
+        int counter;
+        int offset = 0;
+        do
+        {
+            counter = 0;
+
+            IAsyncEnumerable<XElement> sitesXml;
+            try
+            {
+                sitesXml = client.GetXmlAsync(GlobalSetting.Settings.SitesPath + $"?_limit={siteLimit}&_start={siteLimit * offset}", "site");
+            }
+            catch
+            {
+                LoginStatus = false;
+                throw;
+            }
+
+            await foreach (var s in sitesXml)
+            {
+                counter++;
+                newSites.Add
+                (
+                    new SiteModel
+                    {
+                        Title = s.Element("title")!.Value,
+                        Id = s.Element("id")!.Value
+                    }
+                );
+            }
+
+            offset++;
+        } while (counter == siteLimit);
+        sites = newSites;
+    }
+
     public async IAsyncEnumerable<SiteModel> GetSites(bool refresh = true)
     {
         if (refresh)
         {
-            sites.Clear();
-            int counter;
-            int offset = 0;
-            do
-            {
-                counter = 0;
-
-                IAsyncEnumerable<XElement> sitesXml;
-                try
-                {
-                    sitesXml = client.GetXmlAsync(GlobalSetting.Settings.SitesPath + $"?_limit={siteLimit}&_start={siteLimit * offset}", "site");
-                }
-                catch
-                {
-                    LoginStatus = false;
-                    throw;
-                }
-
-                await foreach (var s in sitesXml)
-                {
-                    counter++;
-                    sites.Add
-                    (
-                        new SiteModel
-                        {
-                            Title = s.Element("title")!.Value,
-                            Id = s.Element("id")!.Value
-                        }
-                    );
-                }
-
-                offset++;
-            } while (counter == siteLimit);
+            await RefreshSites();
         }
         foreach (var s in sites)
         {
@@ -88,12 +105,10 @@ public class KULMSApiService
 
     private async Task RefreshFiles(SiteModel site)
     {
+        List<DirectoryModel> newDirectories = [];
+        List<FileModel> newFiles = [];
 
-        directories.Clear();
-        files.Clear();
-
-        urlPathToPath.Clear();
-        pathToUrlPath.Clear();
+        Dictionary<string, string> urlPathToPath = [];
 
         urlPathToPath.Add("", "");
 
@@ -124,7 +139,7 @@ public class KULMSApiService
                     throw new Exception("Invalid Context.");
                 }
 
-                directories.Add
+                newDirectories.Add
                 (
                     new DirectoryModel
                     {
@@ -134,13 +149,12 @@ public class KULMSApiService
                         Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
                         DownloadStatus = Status.Folder,
                         LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture)
-                        // DecodedPathAsContainer = WebUtility.UrlDecode(c.Element("url")!.Value.Replace(Domain + FilePath + FileRootPath, "").ToString().Replace(site.Id, site.Title).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                     }
                 );
             }
             else if (c.Element("type")!.Value == "text/url")
             {
-                files.Add
+                newFiles.Add
                 (
                     new URLModel
                     {
@@ -155,7 +169,7 @@ public class KULMSApiService
             }
             else
             {
-                files.Add
+                newFiles.Add
                 (
                     new FileModel
                     {
@@ -168,13 +182,18 @@ public class KULMSApiService
                 );
             }
         }
-
+        directories = newDirectories;
+        files = newFiles;
     }
 
     public async IAsyncEnumerable<FileModelBase> GetFiles(SiteModel site, bool refresh = true)
     {
         if (refresh || site.Id != lastFilesId)
         {
+            if (!LoginStatus)
+            {
+                await Login();
+            }
             await RefreshFiles(site);
         }
 
@@ -218,6 +237,25 @@ public class KULMSApiService
         else
         {
             return origin;
+        }
+    }
+
+    private async Task PeriodicRefresh(CancellationToken ct)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(30));
+        while (await timer.WaitForNextTickAsync(ct))
+        {
+            if (!LoginStatus)
+            {
+                continue;
+            }
+            try
+            {
+                await RefreshSites();
+            }
+            catch
+            {
+            }
         }
     }
 }

@@ -38,6 +38,7 @@ public partial class ContentsTabViewModel : ViewModelBase
     public ContentsTabViewModel()
     {
         _ = Login();
+        StartUIRefresh();
     }
 
     public async Task Login()
@@ -82,14 +83,9 @@ public partial class ContentsTabViewModel : ViewModelBase
         using var timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
         while (await timer.WaitForNextTickAsync(ct))
         {
-            // 非同期でデータ取得
-            if (!KULMSApi.LoginStatus)
-            {
-                continue;
-            }
             try
             {
-                sites = await KULMSApi.GetSites().ToListAsync(CancellationToken.None);
+                sites = await KULMSApi.GetSites(false).ToListAsync(CancellationToken.None);
 
                 List<SiteModel> removeSites = [];
 
@@ -167,6 +163,12 @@ public partial class ContentsTabViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    public async Task RefreshDirectory()
+    {
+        await ChangeDirectory(null, true);
+    }
+
+    [RelayCommand]
     public void DownloadAll()
     {
         if (browsedDirectory is null || browsedSite is null)
@@ -177,7 +179,12 @@ public partial class ContentsTabViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async Task ChangeDirectory(IAsyncEnumerable<FileModelBase>? files = null)
+    public async Task ChangeDirectory()
+    {
+        await ChangeDirectory(null, false);
+    }
+
+    public async Task ChangeDirectory(IAsyncEnumerable<FileModelBase>? files = null, bool refresh = false)
     {
         if (CurrentDirectory is null)
         {
@@ -189,7 +196,7 @@ public partial class ContentsTabViewModel : ViewModelBase
             {
                 try
                 {
-                    files = KULMSApi.GetFiles(browsedSite, false);
+                    files = KULMSApi.GetFiles(browsedSite, refresh);
                 }
                 catch
                 {

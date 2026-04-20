@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using KULMS.Local.Services;
 using KULMS.Local.ViewModels;
 
 namespace KULMS.Local.Views;
@@ -21,5 +22,6 @@ public partial class MainWindow : Window
         {
             viewModel.ContentsViewModel.StopService();
         }
+        KULMSApiService.KULMSApi.StopPeriodicRefresh();
     }
 }

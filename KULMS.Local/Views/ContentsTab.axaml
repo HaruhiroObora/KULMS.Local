@@ -11,7 +11,7 @@
   <Grid RowDefinitions="Auto,*">
     <Grid.KeyBindings>
       <KeyBinding Gesture="Alt+Up" Command="{Binding GoToUpperDirectoryCommand}"/>
-      <KeyBinding Gesture="Alt+R" Command="{Binding ChangeDirectoryCommand}"/>
+      <KeyBinding Gesture="Alt+R" Command="{Binding RefreshDirectoryCommand}"/>
     </Grid.KeyBindings>
     <Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto" Grid.Row="0" Margin="4">
       <Button Content="↑" Grid.Column="0" Grid.Row="0" Command="{Binding GoToUpperDirectoryCommand}" FontSize="15" Margin="6,2"/>

@@ -10,19 +10,15 @@
   <Grid RowDefinitions="*,Auto">
     <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="0">
       <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
-        <TextBlock Text="授業資料の保存先" FontSize="18"/>
-        <TextBox Text="{Binding LocalDirectoryPrefix}" FontSize="13"/>
-        <TextBlock Text="Chromeの実行ファイルパス" FontSize="18"/>
-        <TextBox Text="{Binding BrowserExecutablePath}" FontSize="13"/>
-        <TextBlock Text="LMSのドメイン" FontSize="18"/>
-        <TextBox Text="{Binding Domain}" FontSize="13"/>
-        <TextBlock Text="ID" FontSize="18"/>
-        <TextBox Text="{Binding ID}" FontSize="13"/>
-        <!-- <TextBlock Text="ログインページのパス" FontSize="18"/>
-        <TextBox Text="{Binding LoginPath}" FontSize="13"/>
-        <TextBlock Text="トップページのパス" FontSize="18"/>
-        <TextBox Text="{Binding TopPagePath}" FontSize="13"/>
-        <TextBlock Text="サイト一覧のパス" FontSize="18"/> -->
+        <TextBlock Text="授業資料の保存先" FontSize="20"/>
+        <TextBox Text="{Binding LocalDirectoryPrefix}" FontSize="15"/>
+        <TextBlock Text="Chromeの実行ファイルパス" FontSize="20"/>
+        <TextBox Text="{Binding BrowserExecutablePath}" FontSize="15"/>
+        <TextBlock Text="LMSのドメイン" FontSize="20"/>
+        <TextBox Text="{Binding Domain}" FontSize="15"/>
+        <TextBlock Text="ID" FontSize="20"/>
+        <TextBox Text="{Binding ID}" FontSize="15"/>
+        <ToggleSwitch Content="サイト一覧の更新を有効にする(次回の起動から反映されます)" IsChecked="{Binding SiteRefresh}" FontSize="20"/>
       </StackPanel>
     </ScrollViewer>
     <Button Content="保存" Command="{Binding SaveSettingsCommand}" HorizontalAlignment="Right"/>
