@@ -182,8 +182,15 @@ public class ApiHttpClient
         {
             throw new Exception("Client is not set.");
         }
-
-        var response = await client.GetAsync(GlobalSetting.Settings.Domain + uriPath);
+        HttpResponseMessage response;
+        try
+        {
+            response = await client.GetAsync(GlobalSetting.Settings.Domain + uriPath);
+        }
+        catch
+        {
+            throw new Exception();
+        }
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException("Request failed.");

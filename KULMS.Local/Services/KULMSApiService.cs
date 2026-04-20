@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -117,70 +118,86 @@ public class KULMSApiService
         {
             contentsXml = client.GetXmlAsync(string.Format(GlobalSetting.Settings.ContentsPath, site.Id), "content");
         }
-        catch
+        catch (HttpRequestException)
         {
             LoginStatus = false;
+            throw;
+        }
+        catch
+        {
             throw;
         }
 
         lastFilesId = site.Id;
 
-        await foreach (var c in contentsXml)
+        try
         {
-            if (c.Element("type")!.Value == "collection")
+            await foreach (var c in contentsXml)
             {
-                var pathAsContainer = WebUtility.UrlDecode(c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain + GlobalSetting.Settings.FilePath + GlobalSetting.Settings.FileRootPath, "").ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
-                if (urlPathToPath.TryGetValue(Path.GetDirectoryName(pathAsContainer)!.Replace("\\", "/"), out var parentPath))
+                if (c.Element("type")!.Value == "collection")
                 {
-                    urlPathToPath.Add(pathAsContainer, Path.Combine(parentPath, c.Element("title")!.Value));
+                    var pathAsContainer = WebUtility.UrlDecode(c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain + GlobalSetting.Settings.FilePath + GlobalSetting.Settings.FileRootPath, "").ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+                    if (urlPathToPath.TryGetValue(Path.GetDirectoryName(pathAsContainer)!.Replace("\\", "/"), out var parentPath))
+                    {
+                        urlPathToPath.Add(pathAsContainer, Path.Combine(parentPath, c.Element("title")!.Value));
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid Context.");
+                    }
+
+                    newDirectories.Add
+                    (
+                        new DirectoryModel
+                        {
+                            Name = c.Element("title")!.Value,
+                            Type = string.Empty,
+                            UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
+                            Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
+                            DownloadStatus = Status.Folder,
+                            LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture)
+                        }
+                    );
+                }
+                else if (c.Element("type")!.Value == "text/url")
+                {
+                    newFiles.Add
+                    (
+                        new URLModel
+                        {
+                            Name = Path.GetFileNameWithoutExtension(c.Element("title")!.Value),
+                            Type = Path.GetExtension(c.Element("url")!.Value).AsSpan().TrimStart(".").ToString(),
+                            UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
+                            Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
+                            LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture),
+                            URL = c.Element("webLinkUrl")!.Value
+                        }
+                    );
                 }
                 else
                 {
-                    throw new Exception("Invalid Context.");
+                    newFiles.Add
+                    (
+                        new FileModel
+                        {
+                            Name = Path.GetFileNameWithoutExtension(c.Element("title")!.Value),
+                            Type = Path.GetExtension(c.Element("url")!.Value).AsSpan().TrimStart(".").ToString(),
+                            UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
+                            Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
+                            LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture)
+                        }
+                    );
                 }
-
-                newDirectories.Add
-                (
-                    new DirectoryModel
-                    {
-                        Name = c.Element("title")!.Value,
-                        Type = string.Empty,
-                        UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
-                        Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
-                        DownloadStatus = Status.Folder,
-                        LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture)
-                    }
-                );
             }
-            else if (c.Element("type")!.Value == "text/url")
-            {
-                newFiles.Add
-                (
-                    new URLModel
-                    {
-                        Name = Path.GetFileNameWithoutExtension(c.Element("title")!.Value),
-                        Type = Path.GetExtension(c.Element("url")!.Value).AsSpan().TrimStart(".").ToString(),
-                        UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
-                        Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
-                        LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture),
-                        URL = c.Element("webLinkUrl")!.Value
-                    }
-                );
-            }
-            else
-            {
-                newFiles.Add
-                (
-                    new FileModel
-                    {
-                        Name = Path.GetFileNameWithoutExtension(c.Element("title")!.Value),
-                        Type = Path.GetExtension(c.Element("url")!.Value).AsSpan().TrimStart(".").ToString(),
-                        UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
-                        Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
-                        LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture)
-                    }
-                );
-            }
+        }
+        catch (HttpRequestException)
+        {
+            LoginStatus = false;
+            throw;
+        }
+        catch
+        {
+            throw;
         }
         directories = newDirectories;
         files = newFiles;
