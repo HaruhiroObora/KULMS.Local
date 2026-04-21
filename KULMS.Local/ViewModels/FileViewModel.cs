@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using KULMS.Local.Models;
@@ -27,18 +29,24 @@ public partial class FileViewModel : FileViewModelBase
     public async Task Open()
     {
         if (!(DownloadStatus == Status.Offline))
-                {
-                    await Download();
-                }
-                if (DownloadStatus == Status.Offline)
-                {
-                    Syncer.OpenFile(FileModel);
-                }
+        {
+            await Download();
+        }
+        if (DownloadStatus == Status.Offline)
+        {
+            Syncer.OpenFile(FileModel);
+        }
     }
 
     [RelayCommand]
     public async Task Download()
     {
         await Syncer.Download(FileModel);
+    }
+
+    [RelayCommand]
+    public void OpeninFileApp()
+    {
+        Syncer.OpeninFileApp(FileModel);
     }
 }

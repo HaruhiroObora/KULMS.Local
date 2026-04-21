@@ -10,6 +10,7 @@ using static KULMS.Local.Services.GlobalSettings;
 using static KULMS.Local.Services.KULMSApiService;
 using System.Linq;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace KULMS.Local.Services;
 
@@ -173,5 +174,41 @@ public class SyncService
 </html>";
 
         File.WriteAllText(fullPath, content.Trim(), Encoding.UTF8);
+    }
+
+    public void OpeninFileApp(FileModelBase file)
+    {
+        if (file is DirectoryModel directory)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, directory.Path),
+                UseShellExecute = true
+            });
+            return;
+        }
+        string path;
+        if (file is URLModel uRL)
+        {
+            path = Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, uRL.NoExtentionPath) + ".html";
+        }
+        else
+        {
+            path = Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Path);
+        }
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            Process.Start("explorer.exe", $"/select,\"{path}\"");
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            string appleScript = $"tell application \"Finder\" to reveal POSIX file \"{path}\"";
+            Process.Start("osascript", $"-e '{appleScript}' -e 'tell application \"Finder\" to activate'");
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            var parentDir = Path.GetDirectoryName(path);
+            Process.Start("xdg-open", $"\"{parentDir}\"");
+        }
     }
 }

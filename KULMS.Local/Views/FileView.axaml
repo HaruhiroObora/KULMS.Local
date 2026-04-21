@@ -13,6 +13,8 @@
         <ContextMenu>
           <MenuItem Header="開く" Command="{Binding OpenCommand}"/>
           <MenuItem Header="ダウンロード" Command="{Binding DownloadCommand}" />
+          <Separator/>
+          <MenuItem Header="ファイルに表示" Command="{Binding OpeninFileAppCommand}"/>
         </ContextMenu>
       </Grid.ContextMenu>
       <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="0"/>
