@@ -139,6 +139,7 @@ public class SyncService : ISyncService
             file.DownloadStatus = Status.Failed;
             return;
         }
+        var cachedStatus = file.DownloadStatus;
         file.DownloadStatus = Status.Downloading;
         try
         {
@@ -150,7 +151,7 @@ public class SyncService : ISyncService
             }
             else
             {
-                file.DownloadStatus = Status.Cloud;
+                file.DownloadStatus = cachedStatus;
             }
         }
         catch

@@ -1,7 +1,5 @@
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -9,7 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using KULMS.Local.Models;
 
 using static KULMS.Local.Services.SyncService;
-using static KULMS.Local.Services.DialogService;
+using static KULMS.Local.Services.TopLevelService;
 
 namespace KULMS.Local.ViewModels;
 
@@ -68,11 +66,11 @@ public partial class FileViewModel : FileViewModelBase
         };
 
         // ダイアログを表示して結果を受け取る
-        var file = await Dialog.GetFile(options);
+        var file = await TopLevelServiceProvider.GetFileFromDialog(options);
 
         if (file != null)
         {
-            await Syncer.Download(FileModel, file.Path.LocalPath);
+            await Syncer.Download(FileModel, file.Path.LocalPath, false);
         }
     }
 }

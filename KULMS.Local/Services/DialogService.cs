@@ -4,13 +4,13 @@ using Avalonia.Platform.Storage;
 
 namespace KULMS.Local.Services;
 
-public class DialogService
+public class TopLevelService
 {
-    public static DialogService Dialog = new();
+    public static TopLevelService TopLevelServiceProvider = new();
 
     private TopLevel? _topLevel;
 
-    private DialogService()
+    private TopLevelService()
     {    
     }
 
@@ -19,8 +19,13 @@ public class DialogService
         _topLevel = topLevel;
     }
 
-    public async Task<IStorageFile?> GetFile(FilePickerSaveOptions options)
+    public async Task<IStorageFile?> GetFileFromDialog(FilePickerSaveOptions options)
     {
         return _topLevel is not null ? await _topLevel.StorageProvider.SaveFilePickerAsync(options) : null;
+    }
+
+    public async Task<IStorageItem?> GetFileItem(string path)
+    {
+        return _topLevel is not null ? await _topLevel.StorageProvider.TryGetFileFromPathAsync(path) : null;
     }
 }

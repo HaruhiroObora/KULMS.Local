@@ -21,13 +21,13 @@ public partial class ContentsTabViewModel : ViewModelBase
     public ObservableCollection<FileViewModelBase> Files { get; } = new();
 
     [ObservableProperty]
-    public FileViewModelBase? selectedFile;
+    public partial FileViewModelBase? SelectedFile { get; set; }
 
     [ObservableProperty]
-    public string? currentDirectory;
+    public partial string? CurrentDirectory { get; set; }
 
     [ObservableProperty]
-    public SiteModel? selectedSite;
+    public partial SiteModel? SelectedSite { get; set; }
 
     public SiteModel? browsedSite;
 

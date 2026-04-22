@@ -9,15 +9,15 @@ namespace KULMS.Local.ViewModels;
 public partial class SettingsTabViewModel : ViewModelBase
 {
     [ObservableProperty]
-    private string domain = GlobalSetting.Settings.Domain;
+    public partial string Domain { get; set; } = GlobalSetting.Settings.Domain;
     [ObservableProperty]
-    private string iD = GlobalSetting.Settings.ID;
+    public partial string ID { get; set; } = GlobalSetting.Settings.ID;
     [ObservableProperty]
-    private string browserExecutablePath = GlobalSetting.Settings.BrowserExecutablePath;
+    public partial string BrowserExecutablePath { get; set; } = GlobalSetting.Settings.BrowserExecutablePath;
     [ObservableProperty]
-    private string localDirectoryPrefix = GlobalSetting.Settings.LocalDirectoryPrefix;
+    public partial string LocalDirectoryPrefix { get; set; } = GlobalSetting.Settings.LocalDirectoryPrefix;
     [ObservableProperty]
-    private bool siteRefresh = GlobalSetting.Settings.SiteRefresh;
+    public partial bool SiteRefresh { get; set; } = GlobalSetting.Settings.SiteRefresh;
 
 
 

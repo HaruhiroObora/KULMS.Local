@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using KULMS.Local.Services;
 using KULMS.Local.ViewModels;
 
-using static KULMS.Local.Services.DialogService;
+using static KULMS.Local.Services.TopLevelService;
 
 namespace KULMS.Local.Views;
 
@@ -12,7 +12,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        Dialog.SetTopLevel(this);
+        TopLevelServiceProvider.SetTopLevel(this);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)

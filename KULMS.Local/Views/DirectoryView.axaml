@@ -11,7 +11,7 @@
     <Grid ColumnDefinitions="*,Auto,Auto,Auto" DoubleTapped="DoubleClicked" Background="Transparent" Margin="0">
       <Grid.ContextMenu>
         <ContextMenu>
-          <MenuItem Header="ファイルに表示" Command="{Binding OpeninFileAppCommand}"/>
+          <MenuItem Header="ファイルに表示" Command="{Binding OpeninFileApp}"/>
         </ContextMenu>
       </Grid.ContextMenu>
       <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="0"/>

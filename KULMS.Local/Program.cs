@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Media;
 using System;
 
 namespace KULMS.Local;
@@ -17,5 +18,16 @@ sealed class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
+            .With(new FontManagerOptions
+            {
+                FontFallbacks =
+            [
+                new FontFallback { FontFamily = new FontFamily("Noto Sans CJK JP") },
+                new FontFallback { FontFamily = new FontFamily("Segoe UI") },
+                new FontFallback { FontFamily = new FontFamily("Hiragino Sans") },
+                new FontFallback { FontFamily = new FontFamily("Ubuntu") },
+                new FontFallback { FontFamily = new FontFamily("Meiryo") },
+            ]
+            })
             .LogToTrace();
 }

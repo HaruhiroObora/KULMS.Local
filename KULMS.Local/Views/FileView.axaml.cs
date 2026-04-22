@@ -3,9 +3,12 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
+using KULMS.Local.Services;
 using KULMS.Local.ViewModels;
 
-using static KULMS.Local.Services.SyncService;
+using static KULMS.Local.Services.TopLevelService;
+using static KULMS.Local.Services.GlobalSettings;
+using System;
 
 namespace KULMS.Local.Views;
 
