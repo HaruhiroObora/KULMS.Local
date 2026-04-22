@@ -14,9 +14,23 @@ using System.Runtime.InteropServices;
 
 namespace KULMS.Local.Services;
 
-public class SyncService
+public interface ISyncService
 {
-    public static SyncService Syncer { get; } = new();
+    public IAsyncEnumerable<FileModelBase> DirectoryFilter(IAsyncEnumerable<FileModelBase> files, string path);
+    public Task CheckDownloaded(IAsyncEnumerable<FileModelBase> files);
+    public void OpenFile(FileModel file);
+    public Task Download(FileModel file, string? customPath = null, bool statusChange = true);
+    public Task DownloadAll(SiteModel site, DirectoryModel directory, bool chain = false, bool refresh = false);
+    public void OpeninFileApp(FileModelBase file);
+}
+
+public class SyncService : ISyncService
+{
+    public static ISyncService Syncer { get; } = new SyncService();
+
+    private SyncService()
+    {
+    }
 
     public async IAsyncEnumerable<FileModelBase> DirectoryFilter(IAsyncEnumerable<FileModelBase> files, string path)
     {
@@ -27,10 +41,6 @@ public class SyncService
                 yield return f;
             }
         }
-    }
-
-    private SyncService()
-    {
     }
 
     public async Task CheckDownloaded(IAsyncEnumerable<FileModelBase> files)
@@ -48,7 +58,7 @@ public class SyncService
         }
     }
 
-    public async Task<FileStream> GetDownloadStream(FileModel file)
+    private FileStream GetDownloadStream(FileModel file)
     {
         if (!Path.Exists(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Parent)))
         {
@@ -57,7 +67,16 @@ public class SyncService
         return new FileStream(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Path), FileMode.Create, FileAccess.Write);
     }
 
-    public void DeleteStream(FileModel file)
+    private FileStream GetDownloadStream(string path)
+    {
+        if (!Path.Exists(Path.GetDirectoryName(path)))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        }
+        return new FileStream(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, path), FileMode.Create, FileAccess.Write);
+    }
+
+    private void DeleteStream(FileModel file)
     {
         File.Delete(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Path));
     }
@@ -79,23 +98,28 @@ public class SyncService
         }
     }
 
-    public async Task Download(FileModel file)
+    public async Task Download(FileModel file, string? customPath = null, bool statusChange = true)
     {
         if (file.DownloadStatus == Status.Downloading)
         {
             return;
         }
+        customPath ??= Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Path);
+
         if (file is URLModel uRL)
         {
-            if (!Path.Exists(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, uRL.Parent)))
+            if (!Path.Exists(Path.GetDirectoryName(customPath)))
             {
-                Directory.CreateDirectory(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, uRL.Parent));
+                Directory.CreateDirectory(Path.GetDirectoryName(customPath)!);
             }
-            var path = Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, uRL.NoExtentionPath) + ".html";
+            var path = Path.Combine(Path.GetDirectoryName(customPath)!, Path.GetFileNameWithoutExtension(customPath)) + ".html";
             try
             {
                 CreateHtmlShortcut(path, uRL.URL);
-                uRL.DownloadStatus = Status.Offline;
+                if (statusChange)
+                {
+                    uRL.DownloadStatus = Status.Offline;
+                }
                 return;
             }
             catch
@@ -104,10 +128,11 @@ public class SyncService
                 return;
             }
         }
+
         FileStream stream;
         try
         {
-            stream = await GetDownloadStream(file);
+            stream = GetDownloadStream(customPath);
         }
         catch
         {
@@ -119,7 +144,14 @@ public class SyncService
         {
             await KULMSApi.Download(file, stream);
 
-            file.DownloadStatus = Status.Offline;
+            if (statusChange)
+            {
+                file.DownloadStatus = Status.Offline;
+            }
+            else
+            {
+                file.DownloadStatus = Status.Cloud;
+            }
         }
         catch
         {

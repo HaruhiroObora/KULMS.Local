@@ -15,6 +15,8 @@
           <MenuItem Header="ダウンロード" Command="{Binding DownloadCommand}" />
           <Separator/>
           <MenuItem Header="ファイルに表示" Command="{Binding OpeninFileAppCommand}"/>
+          <Separator/>
+          <MenuItem Header="別名で保存" Command="{Binding SaveFileCommand}"/>
         </ContextMenu>
       </Grid.ContextMenu>
       <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="0"/>
