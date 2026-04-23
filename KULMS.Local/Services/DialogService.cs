@@ -23,9 +23,4 @@ public class TopLevelService
     {
         return _topLevel is not null ? await _topLevel.StorageProvider.SaveFilePickerAsync(options) : null;
     }
-
-    public async Task<IStorageItem?> GetFileItem(string path)
-    {
-        return _topLevel is not null ? await _topLevel.StorageProvider.TryGetFileFromPathAsync(path) : null;
-    }
 }

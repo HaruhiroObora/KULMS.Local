@@ -1,14 +1,6 @@
-using System.IO;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Platform.Storage;
-using KULMS.Local.Services;
 using KULMS.Local.ViewModels;
-
-using static KULMS.Local.Services.TopLevelService;
-using static KULMS.Local.Services.GlobalSettings;
-using System;
 
 namespace KULMS.Local.Views;
 
@@ -22,5 +14,14 @@ public partial class FileView : UserControl
     private void DoubleClicked(object? sender, TappedEventArgs e)
     {
         _ = ((FileViewModel?)DataContext)!.Open();
+    }
+
+    private async void ListEnterPressed(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            await ((ContentsTabViewModel?)DataContext)!.ListEnterPressed();
+            Dispatcher.UIThread.Post(() => ((ListBox?)sender)?.Focus(), DispatcherPriority.Render);
+        }
     }
 }
