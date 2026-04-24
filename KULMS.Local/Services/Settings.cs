@@ -9,7 +9,7 @@ public class GlobalSettings
 {
     public Settings Settings = new();
     public static GlobalSettings GlobalSetting { get; } = new();
-
+    private static readonly JsonSerializerOptions options = new(){ WriteIndented = true };
 
     private GlobalSettings()
     {
@@ -40,8 +40,6 @@ public class GlobalSettings
         }
         var path = Path.Combine(dirpath, "settings.json");
 
-        var options = new JsonSerializerOptions { WriteIndented = true };
-
         using (var jsonStream = new FileStream(path, FileMode.Create, FileAccess.Write))
         {
             JsonSerializer.Serialize(jsonStream, Settings, options);
@@ -61,18 +59,19 @@ public class Settings
     public string LoginPath { get; set; } = "/portal/login";
     public string TopPagePath { get; set; } = "/portal";
     public string LocalDirectoryPrefix { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "授業資料");
-
     public bool SiteRefresh { get; set; } = true;
+    public string AssignmentPath { get; set; } = "/direct/assignment/my.xml";
+    public string AssignmentSitePath { get; set; } = "/direct/assignment/site/{0}.xml";
 
     public static string? GetChromePath()
     {
         if (OperatingSystem.IsWindows())
         {
-            string[] paths = {
+            string[] paths = [
             @"C:\Program Files\Google\Chrome\Application\chrome.exe",
             @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Google\Chrome\Application\chrome.exe")
-        };
+        ];
             return paths.FirstOrDefault(File.Exists);
         }
 
@@ -84,10 +83,10 @@ public class Settings
 
         if (OperatingSystem.IsLinux())
         {
-            string[] paths = {
+            string[] paths = [
             "/usr/bin/google-chrome",
             "/usr/bin/chrome"
-        };
+        ];
             return paths.FirstOrDefault(File.Exists);
         }
 

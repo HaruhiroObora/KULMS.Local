@@ -131,11 +131,25 @@ public partial class ContentsTabViewModel : ViewModelBase
         {
             CurrentDirectory = directory.DirectoryModel.Path;
             browsedDirectory = directory;
-            _ = ChangeDirectory();
+            await ChangeDirectory();
         }
         else if (SelectedFile is FileViewModel file)
         {
-            _ = file.Open();
+            await file.Open();
+        }
+    }
+
+    [RelayCommand]
+    public async Task SiteEnterPressed()
+    {
+        if (SelectedSite is SiteModel site)
+        {
+            CurrentDirectory = site.Title;
+            browsedSite = site;
+            SelectedFile = null;
+            browsedDirectory = null;
+            await ChangeDirectory();
+
         }
     }
 

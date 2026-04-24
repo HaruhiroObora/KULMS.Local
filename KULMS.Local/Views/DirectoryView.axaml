@@ -8,7 +8,7 @@
              x:Class="KULMS.Local.Views.DirectoryView"
              x:DataType="vm:DirectoryViewModel">
   <Border Padding="0" Margin="0" BorderThickness="1">
-    <Grid ColumnDefinitions="*,Auto,Auto,Auto" DoubleTapped="DoubleClicked" Background="Transparent" Margin="0">
+    <Grid ColumnDefinitions="*,Auto,Auto,Auto" DoubleTapped="DoubleClicked" Background="Transparent" Margin="0" Focusable="False">
       <Grid.ContextMenu>
         <ContextMenu>
           <MenuItem Header="ファイルに表示" Command="{Binding OpeninFileApp}"/>

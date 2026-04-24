@@ -27,7 +27,10 @@
       </Grid>
     </Grid>
     <Grid ColumnDefinitions="Auto,*" Grid.Row="1">
-      <ListBox ItemsSource="{Binding Sites}" SelectedItem="{Binding SelectedSite}" KeyDown="SiteEnterPressed" Focusable="True" Grid.Column="0" IsTabStop="True" Margin="4">
+      <ListBox ItemsSource="{Binding Sites}" SelectedItem="{Binding SelectedSite}" Focusable="True" Grid.Column="0" IsTabStop="True" Margin="4">
+        <ListBox.KeyBindings>
+          <KeyBinding Gesture="Enter" Command="{Binding SiteEnterPressed}"/>
+        </ListBox.KeyBindings>
         <ListBox.ItemTemplate>
           <DataTemplate>
             <Border Padding="0" Margin="0" BorderThickness="1">
@@ -43,7 +46,10 @@
           </Style>
         </ListBox.Styles>
       </ListBox>
-      <ListBox ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}" KeyDown="ListEnterPressed" Focusable="True" Grid.Column="1" IsTabStop="True" Margin="4">
+      <ListBox ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}" Focusable="True" Grid.Column="1" IsTabStop="True" Margin="4">
+        <ListBox.KeyBindings>
+          <KeyBinding Gesture="Enter" Command="{Binding ListEnterPressed}"/>
+        </ListBox.KeyBindings>
         <ListBox.DataTemplates>
           <DataTemplate DataType="{x:Type vm:FileViewModel}">
             <views:FileView/>

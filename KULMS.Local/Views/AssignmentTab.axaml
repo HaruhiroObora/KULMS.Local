@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KULMS.Local.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="using:KULMS.Local.Models"
+             xmlns:views="using:KULMS.Local.Views"
+             x:Class="KULMS.Local.Views.AssignmentTab"
+             x:DataType="vm:AssignmentTabViewModel">
+
+  <Grid RowDefinitions="Auto,*">
+    <Grid Grid.Row="0" Margin="4">
+    </Grid>
+    <Grid Grid.Row="1" Margin="4">
+      <ListBox ItemsSource="{Binding Assignments}" SelectedItem="{Binding SelectedAssignment}" Focusable="True" Grid.Column="1" IsTabStop="True" Margin="4">
+        <ListBox.KeyBindings>
+          <KeyBinding Gesture="Enter" Command="{Binding ListEnterPressed}"/>
+        </ListBox.KeyBindings>
+        <ListBox.DataTemplates>
+          <DataTemplate DataType="{x:Type vm:AssignmentViewModel}">
+            <views:AssignmentView/>
+          </DataTemplate>
+        </ListBox.DataTemplates>
+        <ListBox.Styles>
+          <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+          </Style>
+        </ListBox.Styles>
+      </ListBox>
+    </Grid>
+  </Grid>
+
+</UserControl>

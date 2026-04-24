@@ -27,6 +27,8 @@ public class KULMSApiService
     private List<DirectoryModel> directories = [];
     private List<FileModel> files = [];
 
+    private List<AssignmentModel> assignments = [];
+
     private string lastFilesId = string.Empty;
 
     private ApiHttpClient client;
@@ -201,6 +203,80 @@ public class KULMSApiService
         }
         directories = newDirectories;
         files = newFiles;
+    }
+
+    private async Task RefreshAssignments()
+    {
+        List<AssignmentModel> newAssignments = [];
+
+        IAsyncEnumerable<XElement> assignmentsXml;
+        try
+        {
+            assignmentsXml = client.GetXmlAsync(GlobalSetting.Settings.AssignmentPath, "assignment");
+        }
+        catch (HttpRequestException)
+        {
+            LoginStatus = false;
+            throw;
+        }
+        catch
+        {
+            throw;
+        }
+
+        try
+        {
+            await foreach (var a in assignmentsXml)
+            {
+                newAssignments.Add
+                (
+                    new AssignmentModel
+                    {
+                        Title = a.Element("title")!.Value,
+                        Url = a.Element("entityURL")!.Value,
+                        SiteId = a.Element("context")!.Value,
+                        DueDate = DateTime.ParseExact(a.Element("closeTimeString")!.Value, "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture),
+                        Status = AssignmentModel.AssignmentStatusFromString(a.Element("status")!.Value),
+                        SubmissionStatus = AssignmentModel.SubmissionStatusFromString(a.Element("submissions")!.Element("simplesubmission")!.Element("status")!.Value)
+                    }
+                );
+            }
+        }
+        catch (HttpRequestException)
+        {
+            LoginStatus = false;
+            throw;
+        }
+        catch
+        {
+            throw;
+        }
+        assignments = newAssignments;
+    }
+
+    public async IAsyncEnumerable<AssignmentModel> GetAssignments(SiteModel? site = null, bool refresh = true)
+    {
+        if (refresh)
+        {
+            await RefreshAssignments();
+        }
+        if (site is null)
+        {
+            foreach (var a in assignments)
+            {
+                yield return a;
+            }
+        }
+        else
+        {
+            foreach (var a in assignments)
+            {
+                if (a.SiteId == site.Id)
+                {
+                    yield return a;
+                }
+            }
+        }
     }
 
     public async IAsyncEnumerable<FileModelBase> GetFiles(SiteModel site, bool refresh = true)

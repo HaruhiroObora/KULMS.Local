@@ -2,13 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:model="using:KULMS.Local.Models"
              xmlns:vm="using:KULMS.Local.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KULMS.Local.Views.FileView"
              x:DataType="vm:FileViewModel">
   <Border Padding="0" Margin="0" BorderThickness="1">
-    <Grid ColumnDefinitions="*,Auto,Auto,Auto" Background="Transparent" DoubleTapped="DoubleClicked" Margin="0">
+    <Grid ColumnDefinitions="*,Auto,Auto,Auto" Background="Transparent" DoubleTapped="DoubleClicked" Margin="0" Focusable="False">
       <Grid.ContextMenu>
         <ContextMenu>
           <MenuItem Header="開く" Command="{Binding Open}"/>

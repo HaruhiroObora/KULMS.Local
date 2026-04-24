@@ -16,13 +16,4 @@ public partial class FileView : UserControl
     {
         _ = ((FileViewModel?)DataContext)!.Open();
     }
-
-    private async void ListEnterPressed(object? sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter)
-        {
-            await ((ContentsTabViewModel?)DataContext)!.ListEnterPressed();
-            Dispatcher.UIThread.Post(() => ((ListBox?)sender)?.Focus(), DispatcherPriority.Render);
-        }
-    }
 }
