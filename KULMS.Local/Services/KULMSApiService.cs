@@ -234,6 +234,7 @@ public class KULMSApiService
                     {
                         Title = a.Element("title")!.Value,
                         Url = a.Element("entityURL")!.Value,
+                        Id = a.Element("id")!.Value,
                         SiteId = a.Element("context")!.Value,
                         DueDate = DateTime.ParseExact(a.Element("closeTimeString")!.Value, "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture),
                         Status = AssignmentModel.AssignmentStatusFromString(a.Element("status")!.Value),

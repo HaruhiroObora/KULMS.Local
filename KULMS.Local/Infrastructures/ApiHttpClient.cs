@@ -10,7 +10,8 @@ using System.Xml.Linq;
 using static KULMS.Local.Services.GlobalSettings;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using OpenQA.Selenium.Chrome;
+
+using static KULMS.Local.Infrastructures.BrowserManager;
 
 namespace KULMS.Local.Infrastructures;
 
@@ -91,16 +92,7 @@ public class ApiHttpClient
 
     public async Task<bool> SetHttpClientSelenium()
     {
-        var options = new ChromeOptions
-        {
-            BinaryLocation = GlobalSetting.Settings.BrowserExecutablePath
-        };
-
-        string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "KULMSLocal", "ChromeProfile");
-        options.AddArgument($"--user-data-dir={appDataPath}");
-
-        using IWebDriver driver = new ChromeDriver(options);
-
+        var driver = Browser.GetDriver();
         try
         {
             await driver.Navigate().GoToUrlAsync(GlobalSetting.Settings.Domain + GlobalSetting.Settings.LoginPath);
@@ -131,6 +123,8 @@ public class ApiHttpClient
 
             var handler = new HttpClientHandler();
             var seleniumCookies = driver.Manage().Cookies.AllCookies;
+
+            Browser.SaveCookies();
 
             foreach (var seleniumCookie in seleniumCookies)
             {

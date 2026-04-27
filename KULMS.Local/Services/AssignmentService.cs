@@ -4,5 +4,5 @@ namespace KULMS.Local.Services;
 
 public class AssignmentService
 {
-
+    
 }
