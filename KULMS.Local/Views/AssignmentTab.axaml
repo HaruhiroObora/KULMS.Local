@@ -10,7 +10,7 @@
 
   <Grid RowDefinitions="Auto,*">
     <Grid ColumnDefinitions="*,Auto" Grid.Row="0" Margin="4">
-      <Button Content="↻" Command="{Binding LoadAssignments}"/>
+      <Button Content="↻" Command="{Binding LoadAssignments}" Grid.Column="1"/>
     </Grid>
     <Grid Grid.Row="1" Margin="4">
       <ListBox ItemsSource="{Binding Assignments}" SelectedItem="{Binding SelectedAssignment}" Focusable="True" Grid.Column="1" IsTabStop="True" Margin="4">
