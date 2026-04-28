@@ -57,6 +57,11 @@ public class BrowserManager
         return driver;
     }
 
+    public bool WindowExists()
+    {
+        return driver?.IsClosed() ?? false;
+    }
+
     public void SaveCookies()
     {
         try

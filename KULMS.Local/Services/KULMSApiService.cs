@@ -35,15 +35,31 @@ public class KULMSApiService
 
     private CancellationTokenSource cts = new();
 
+    private volatile bool loginInProgress = false;
+    private object _lock = new();
+
     private KULMSApiService()
     {
         client = new();
+        _ = Login();
         StartPeriodicRefresh();
     }
 
     public async Task Login()
     {
+        lock (_lock)
+        {
+            if (loginInProgress)
+            {
+                return;
+            }
+            loginInProgress = true;
+        }
         LoginStatus = await Task.Run(client.SetHttpClientSelenium);
+        lock (_lock)
+        {
+            loginInProgress = false;
+        }
     }
 
     public void StartPeriodicRefresh()
@@ -98,6 +114,14 @@ public class KULMSApiService
     {
         if (refresh)
         {
+            if (!LoginStatus)
+            {
+                await Login();
+            }
+            while (loginInProgress)
+            {
+                await Task.Delay(100);
+            }
             await RefreshSites();
         }
         foreach (var s in sites)
@@ -238,7 +262,7 @@ public class KULMSApiService
                         SiteId = a.Element("context")!.Value,
                         DueDate = DateTime.ParseExact(a.Element("closeTimeString")!.Value, "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture),
                         Status = AssignmentModel.AssignmentStatusFromString(a.Element("status")!.Value),
-                        SubmissionStatus = AssignmentModel.SubmissionStatusFromString(a.Element("submissions")!.Element("simplesubmission")!.Element("status")!.Value)
+                        SubmissionStatus = AssignmentModel.SubmissionStatusFromString(a.Element("submissions")!.Element("simplesubmission")?.Element("status")!.Value)  ?? SubmissionStatus.NotStarted
                     }
                 );
             }
@@ -255,13 +279,21 @@ public class KULMSApiService
         assignments = newAssignments;
     }
 
-    public async IAsyncEnumerable<AssignmentModel> GetAssignments(SiteModel? site = null, bool refresh = true)
+    public async IAsyncEnumerable<AssignmentModel> GetAssignments(IEnumerable<SiteModel>? sites = null, bool refresh = true)
     {
         if (refresh)
         {
+            if (!LoginStatus)
+            {
+                await Login();
+            }
+            while (loginInProgress)
+            {
+                await Task.Delay(100);
+            }
             await RefreshAssignments();
         }
-        if (site is null)
+        if (sites is null)
         {
             foreach (var a in assignments)
             {
@@ -272,9 +304,13 @@ public class KULMSApiService
         {
             foreach (var a in assignments)
             {
-                if (a.SiteId == site.Id)
+                foreach (var s in sites)
                 {
-                    yield return a;
+                    if (a.SiteId == s.Id)
+                    {
+                        yield return a;
+                        break;
+                    }
                 }
             }
         }
@@ -287,6 +323,10 @@ public class KULMSApiService
             if (!LoginStatus)
             {
                 await Login();
+            }
+            while (loginInProgress)
+            {
+                await Task.Delay(100);
             }
             await RefreshFiles(site);
         }
@@ -305,6 +345,14 @@ public class KULMSApiService
     {
         if (refresh || site.Id != lastFilesId)
         {
+            if (!LoginStatus)
+            {
+                await Login();
+            }
+            while (loginInProgress)
+            {
+                await Task.Delay(100);
+            }
             await RefreshFiles(site);
         }
         foreach (var d in directories)

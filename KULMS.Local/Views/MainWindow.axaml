@@ -19,6 +19,9 @@
 
   <!--  -->
   <TabControl>
+    <TabItem Header="課題">
+      <views:AssignmentTab DataContext="{Binding AssignmentViewModel}"/>
+    </TabItem>
     <TabItem Header="授業資料">
       <views:ContentsTab DataContext="{Binding ContentsViewModel}"/>
     </TabItem>

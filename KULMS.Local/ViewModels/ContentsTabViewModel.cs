@@ -37,16 +37,11 @@ public partial class ContentsTabViewModel : ViewModelBase
 
     public ContentsTabViewModel()
     {
-        _ = Login();
         StartUIRefresh();
     }
 
-    public async Task Login()
+    public async Task Initialize()
     {
-        if (!KULMSApi.LoginStatus)
-        {
-            await KULMSApi.Login();
-        }
         List<SiteModel> sites;
         try
         {
@@ -79,6 +74,7 @@ public partial class ContentsTabViewModel : ViewModelBase
 
     private async Task PeriodicUIRefresh(CancellationToken ct)
     {
+        await Initialize();
         List<SiteModel> sites;
         using var timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
         while (await timer.WaitForNextTickAsync(ct))

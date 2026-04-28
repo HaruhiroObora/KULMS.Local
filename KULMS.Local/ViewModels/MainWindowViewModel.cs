@@ -3,5 +3,6 @@
 public partial class MainWindowViewModel : ViewModelBase
 {
     public ContentsTabViewModel ContentsViewModel { get; } = new();
+    public AssignmentTabViewModel AssignmentViewModel { get; } = new();
     public SettingsTabViewModel SettingsViewModel { get; } = new();
 }
