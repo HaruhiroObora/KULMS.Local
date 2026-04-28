@@ -48,7 +48,7 @@ public class AssignmentModel : ObservableObject
         if (status is null) return null;
         else if (status == "未開始") return SubmissionStatus.NotStarted;
         else if (status == "取組中") return SubmissionStatus.UnderWay;
-        else if (status == "提出済み") return SubmissionStatus.Submitted;
+        else if (status.Contains("提出済み")) return SubmissionStatus.Submitted;
         else if (status.Contains("要再提出")) return SubmissionStatus.ResubmissionRequired;
         else if (status.Contains("返却済み")) return SubmissionStatus.Returned;
         else return SubmissionStatus.UNKNOWN;

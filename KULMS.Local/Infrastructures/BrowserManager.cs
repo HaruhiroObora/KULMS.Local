@@ -59,7 +59,7 @@ public class BrowserManager
 
     public bool WindowExists()
     {
-        return driver?.IsClosed() ?? false;
+        return !(driver?.IsClosed() ?? true);
     }
 
     public void SaveCookies()
