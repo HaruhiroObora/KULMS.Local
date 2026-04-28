@@ -27,7 +27,7 @@ public partial class AssignmentTabViewModel : ViewModelBase
     [RelayCommand]
     public async Task LoadAssignments()
     {
-        var assignments = AssignmentManager.Filter(KULMSApi.GetAssignments(), a => true);
+        var assignments = AssignmentManager.Filter(KULMSApi.GetAssignments(), a => a.SubmissionStatus == SubmissionStatus.NotStarted || a.SubmissionStatus == SubmissionStatus.UnderWay);
 
         await Dispatcher.UIThread.InvokeAsync(Assignments.Clear);
 
