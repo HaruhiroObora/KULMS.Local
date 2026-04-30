@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using OpenQA.Selenium;
@@ -73,14 +75,32 @@ public class BrowserManager
         }
     }
 
-    public void ApplyCookies()
+    public void ApplyCookies(List<string>? skip = null)
     {
         try
         {
             foreach (var c in cookies ?? [])
             {
-                driver?.Manage().Cookies.AddCookie(c);
+                if (skip is null)
+                {
+                    driver?.Manage().Cookies.AddCookie(c);
+                }
+                else if (!skip.Contains(c.Name))
+                {
+                    driver?.Manage().Cookies.AddCookie(c);
+                }
             }
+        }
+        catch
+        {
+        }
+    }
+
+    public void DeleteCookie(string name)
+    {
+        try
+        {
+            driver?.Manage().Cookies.DeleteCookieNamed(name);
         }
         catch
         {

@@ -394,6 +394,7 @@ public class KULMSApiService
             try
             {
                 await RefreshSites();
+                await RefreshAssignments();
             }
             catch
             {

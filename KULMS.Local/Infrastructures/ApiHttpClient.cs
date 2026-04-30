@@ -96,22 +96,15 @@ public class ApiHttpClient
         try
         {
             await driver.Navigate().GoToUrlAsync(GlobalSetting.Settings.Domain + GlobalSetting.Settings.LoginPath);
+            Browser.DeleteCookie("AWSALBCORS");
             try
             {
-                // ID入力欄を探す
                 var usernameInput = driver.FindElement(By.Name("username"));
-
-                // 値を入力 (FillAsync 相当: 既存のテキストを消してから入力)
                 usernameInput.Clear();
                 usernameInput.SendKeys(GlobalSetting.Settings.ID);
-
-                // IDが空でない場合、パスワード入力欄にフォーカスを当てる
                 if (!string.IsNullOrEmpty(GlobalSetting.Settings.ID))
                 {
                     var passwordInput = driver.FindElement(By.Name("password"));
-
-                    // Seleniumで「フォーカスを当てる」には、要素をクリックするか
-                    // 空の文字列を送信するのが一般的です
                     passwordInput.Click();
                 }
             }
@@ -191,7 +184,7 @@ public class ApiHttpClient
         }
         var xmlStream = await response.Content.ReadAsStreamAsync();
         var elements = XDocument.Load(xmlStream).Descendants(name);
-
+        
         foreach (var e in elements)
         {
             if (e is not null)
