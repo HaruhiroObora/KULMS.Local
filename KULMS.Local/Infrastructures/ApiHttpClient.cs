@@ -95,8 +95,10 @@ public class ApiHttpClient
         var driver = Browser.GetDriver();
         try
         {
-            await driver.Navigate().GoToUrlAsync(GlobalSetting.Settings.Domain + GlobalSetting.Settings.LoginPath);
+            await driver.Navigate().GoToUrlAsync(GlobalSetting.Settings.Domain + GlobalSetting.Settings.TopPagePath);
+            Browser.DeleteCookie("AWSALB");
             Browser.DeleteCookie("AWSALBCORS");
+            await driver.Navigate().GoToUrlAsync(GlobalSetting.Settings.Domain + GlobalSetting.Settings.LoginPath);
             try
             {
                 var usernameInput = driver.FindElement(By.Name("username"));

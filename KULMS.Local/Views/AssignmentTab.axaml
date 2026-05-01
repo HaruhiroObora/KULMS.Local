@@ -9,8 +9,10 @@
              x:DataType="vm:AssignmentTabViewModel">
 
   <Grid RowDefinitions="Auto,*">
-    <Grid ColumnDefinitions="*,Auto" Grid.Row="0" Margin="4">
-      <Button Content="↻" Command="{Binding LoadAssignments}" Grid.Column="1"/>
+    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Grid.Row="0" Margin="4">
+      <ToggleSwitch OnContent="未提出の課題のみ表示" OffContent="すべての課題を表示" IsChecked="{Binding NotStartedOnly}" Grid.Column="0" Command="{Binding Reload}" FontSize="15" Margin="6,2" VerticalAlignment="Center"/>
+      <TextBlock Text="{Binding LastUpdated, StringFormat='最終更新：yyyy/MM/dd HH:mm:ss'}" FontSize="15" Margin="6,2" Grid.Column="2" VerticalAlignment="Center"/>
+      <Button Content="↻" Command="{Binding Reload}" Grid.Column="3" FontSize="15" Margin="6,2" VerticalAlignment="Center"/>
     </Grid>
     <Grid Grid.Row="1" Margin="4">
       <ListBox ItemsSource="{Binding Assignments}" SelectedItem="{Binding SelectedAssignment}" Focusable="True" Grid.Column="1" IsTabStop="True" Margin="4">

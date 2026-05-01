@@ -10,8 +10,9 @@
   <Border Padding="0" Margin="0" BorderThickness="1">
     <Grid ColumnDefinitions="*,Auto,Auto,Auto" Background="Transparent" DoubleTapped="OpenPage" Margin="0" Focusable="False">
       <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBlock Text="{Binding SubmissionStatus}" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="3"/>
+      <TextBlock Text="{Binding Site}" TextTrimming="CharacterEllipsis" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="1"/>
       <TextBlock Text="{Binding Due, StringFormat='yyyy/MM/dd HH:mm'}" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="2"/>
+      <TextBlock Text="{Binding SubmissionStatus}" FontSize="15" Margin="4,8" VerticalAlignment="Center" Grid.Column="3"/>
     </Grid>
   </Border>
 

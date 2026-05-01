@@ -18,6 +18,8 @@ public partial class SettingsTabViewModel : ViewModelBase
     public partial string LocalDirectoryPrefix { get; set; } = GlobalSetting.Settings.LocalDirectoryPrefix;
     [ObservableProperty]
     public partial bool SiteRefresh { get; set; } = GlobalSetting.Settings.SiteRefresh;
+    [ObservableProperty]
+    public partial int? RefreshSpan { get; set; } = GlobalSetting.Settings.RefreshSpan;
 
 
 
@@ -29,6 +31,7 @@ public partial class SettingsTabViewModel : ViewModelBase
         GlobalSetting.Settings.BrowserExecutablePath = BrowserExecutablePath;
         GlobalSetting.Settings.LocalDirectoryPrefix = LocalDirectoryPrefix;
         GlobalSetting.Settings.SiteRefresh = SiteRefresh;
+        GlobalSetting.Settings.RefreshSpan = RefreshSpan ?? 5;
 
         GlobalSetting.SaveSettings();
     }

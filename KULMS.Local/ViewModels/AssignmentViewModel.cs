@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using KULMS.Local.Models;
 
 using static KULMS.Local.Infrastructures.BrowserManager;
+using static KULMS.Local.Services.KULMSApiService;
 using static KULMS.Local.Services.GlobalSettings;
 
 namespace KULMS.Local.ViewModels;
@@ -12,6 +13,8 @@ public class AssignmentViewModel(AssignmentModel model) : ViewModelBase
     public AssignmentModel AssignmentModel = model;
 
     public string Title => AssignmentModel.Title;
+
+    public string Site => KULMSApi.SearchSiteFromId(AssignmentModel.SiteId)?.Title ?? string.Empty;
 
     public DateTime Due => AssignmentModel.DueDate;
     

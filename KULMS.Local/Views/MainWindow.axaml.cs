@@ -19,12 +19,6 @@ public partial class MainWindow : Window
     {
         base.OnDetachedFromVisualTree(e);
 
-        // DataContext経由でViewModelを取得し、停止メソッドを呼ぶ
-        var viewModel = DataContext as MainWindowViewModel;
-        if (viewModel is not null)
-        {
-            viewModel.ContentsViewModel.StopService();
-        }
         KULMSApiService.KULMSApi.StopPeriodicRefresh();
     }
 }

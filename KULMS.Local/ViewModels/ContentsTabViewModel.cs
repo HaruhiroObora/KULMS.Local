@@ -33,11 +33,10 @@ public partial class ContentsTabViewModel : ViewModelBase
 
     public DirectoryViewModel? browsedDirectory;
 
-    private CancellationTokenSource? _cts;
-
     public ContentsTabViewModel()
     {
-        StartUIRefresh();
+        KULMSApi.SitesUpdated += async () => await SitesRefresh();
+        _ = Initialize();
     }
 
     public async Task Initialize()
@@ -65,58 +64,45 @@ public partial class ContentsTabViewModel : ViewModelBase
         }
     }
 
-    public void StartUIRefresh()
+    private async Task SitesRefresh()
     {
-        _cts = new CancellationTokenSource();
-        // 戻り値を待たずに非同期ループを開始
-        _ = PeriodicUIRefresh(_cts.Token);
-    }
-
-    private async Task PeriodicUIRefresh(CancellationToken ct)
-    {
-        await Initialize();
-        List<SiteModel> sites;
-        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
-        while (await timer.WaitForNextTickAsync(ct))
+        try
         {
-            try
+            var sites = await KULMSApi.GetSites(false).ToListAsync(CancellationToken.None);
+
+            List<SiteModel> removeSites = [];
+
+            foreach (var s in Sites)
             {
-                sites = await KULMSApi.GetSites(false).ToListAsync(CancellationToken.None);
-
-                List<SiteModel> removeSites = [];
-
-                foreach (var s in Sites)
+                if (!sites.Any(x => x.Id == s.Id))
                 {
-                    if (!sites.Any(x => x.Id == s.Id))
-                    {
-                        removeSites.Add(s);
-                    }
-                    else
-                    {
-                        sites.RemoveAll(x => x.Id == s.Id);
-                    }
+                    removeSites.Add(s);
                 }
-                foreach (var s in removeSites)
+                else
                 {
-                    await Dispatcher.UIThread.InvokeAsync(() => Sites.Remove(s));
-                }
-                foreach (var s in sites)
-                {
-                    int idx = 0;
-                    foreach (var site in Sites)
-                    {
-                        if (string.Compare(WeekDayToInt(site.Title), WeekDayToInt(s.Title)) == 1)
-                        {
-                            break;
-                        }
-                        idx++;
-                    }
-                    await Dispatcher.UIThread.InvokeAsync(() => Sites.Insert(idx, s));
+                    sites.RemoveAll(x => x.Id == s.Id);
                 }
             }
-            catch
+            foreach (var s in removeSites)
             {
+                await Dispatcher.UIThread.InvokeAsync(() => Sites.Remove(s));
             }
+            foreach (var s in sites)
+            {
+                int idx = 0;
+                foreach (var site in Sites)
+                {
+                    if (string.Compare(WeekDayToInt(site.Title), WeekDayToInt(s.Title)) == 1)
+                    {
+                        break;
+                    }
+                    idx++;
+                }
+                await Dispatcher.UIThread.InvokeAsync(() => Sites.Insert(idx, s));
+            }
+        }
+        catch
+        {
         }
     }
 
@@ -239,11 +225,6 @@ public partial class ContentsTabViewModel : ViewModelBase
             }
         }
         SelectedFile = null;
-    }
-
-    public void StopService()
-    {
-        _cts?.Cancel();
     }
 
     private string WeekDayToInt(string origin)

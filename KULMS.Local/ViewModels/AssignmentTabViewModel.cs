@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,6 +8,9 @@ using KULMS.Local.Models;
 using static KULMS.Local.Services.KULMSApiService;
 using static KULMS.Local.Services.AssignmentService;
 using Avalonia.Threading;
+using System.Threading;
+
+using System.Linq;
 
 namespace KULMS.Local.ViewModels;
 
@@ -19,19 +21,36 @@ public partial class AssignmentTabViewModel : ViewModelBase
     [ObservableProperty]
     public partial AssignmentViewModel? SelectedAssignment { get; set; }
 
+    [ObservableProperty]
+    public partial bool NotStartedOnly { get; set; } = true;
+
+    public DateTime LastUpdated => KULMSApi.assignmentsUpdate;
+
     public AssignmentTabViewModel()
     {
+        KULMSApi.AssignmentsUpdated += async () => await LoadAssignments(false);
         _ = LoadAssignments();
     }
 
     [RelayCommand]
-    public async Task LoadAssignments()
+    public async Task Reload()
     {
-        var assignments = AssignmentManager.Filter(KULMSApi.GetAssignments(), a => a.SubmissionStatus == SubmissionStatus.NotStarted || a.SubmissionStatus == SubmissionStatus.UnderWay);
+        await LoadAssignments();
+    }
+
+    public async Task LoadAssignments(bool refresh = true)
+    {
+        var assignments = KULMSApi.GetAssignments(refresh: refresh);
+        if (NotStartedOnly)
+        {
+            assignments = AssignmentManager.Filter(assignments, a => a.SubmissionStatus == SubmissionStatus.NotStarted || a.SubmissionStatus == SubmissionStatus.UnderWay);
+        }
+
+        var assignmentsList = await assignments.ToListAsync(CancellationToken.None);
 
         await Dispatcher.UIThread.InvokeAsync(Assignments.Clear);
 
-        await foreach (var assignment in assignments)
+        foreach (var assignment in assignmentsList)
         {
             {
                 int idx = 0;
@@ -44,6 +63,7 @@ public partial class AssignmentTabViewModel : ViewModelBase
                     idx++;
                 }
                 await Dispatcher.UIThread.InvokeAsync(() => Assignments.Insert(idx, new AssignmentViewModel(assignment)));
+                OnPropertyChanged(nameof(LastUpdated));
             }
         }
     }

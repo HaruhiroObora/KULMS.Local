@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -24,10 +25,18 @@ public class KULMSApiService
 
     private List<SiteModel> sites = [];
 
+    public DateTime sitesUpdate;
+
+    public event Action? SitesUpdated;
+
     private List<DirectoryModel> directories = [];
     private List<FileModel> files = [];
 
     private List<AssignmentModel> assignments = [];
+
+    public DateTime assignmentsUpdate;
+
+    public event Action? AssignmentsUpdated;
 
     private string lastFilesId = string.Empty;
 
@@ -42,7 +51,10 @@ public class KULMSApiService
     {
         client = new();
         _ = Login();
-        StartPeriodicRefresh();
+        if (GlobalSetting.Settings.SiteRefresh)
+        {
+            StartPeriodicRefresh();
+        }
     }
 
     public async Task Login()
@@ -108,6 +120,7 @@ public class KULMSApiService
             offset++;
         } while (counter == siteLimit);
         sites = newSites;
+        sitesUpdate = DateTime.Now;
     }
 
     public async IAsyncEnumerable<SiteModel> GetSites(bool refresh = true)
@@ -128,6 +141,11 @@ public class KULMSApiService
         {
             yield return s;
         }
+    }
+
+    public SiteModel? SearchSiteFromId(string id)
+    {
+        return sites.FirstOrDefault(s => s.Id == id);
     }
 
     private async Task RefreshFiles(SiteModel site)
@@ -260,7 +278,7 @@ public class KULMSApiService
                         Url = a.Element("entityURL")!.Value,
                         Id = a.Element("id")!.Value,
                         SiteId = a.Element("context")!.Value,
-                        DueDate = DateTime.ParseExact(a.Element("closeTimeString")!.Value, "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture),
+                        DueDate = DateTime.ParseExact(a.Element("dueTimeString")!.Value, "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture),
                         Status = AssignmentModel.AssignmentStatusFromString(a.Element("status")!.Value),
                         SubmissionStatus = AssignmentModel.SubmissionStatusFromString(a.Element("submissions")!.Element("simplesubmission")?.Element("status")!.Value)  ?? SubmissionStatus.NotStarted
                     }
@@ -277,6 +295,7 @@ public class KULMSApiService
             throw;
         }
         assignments = newAssignments;
+        assignmentsUpdate = DateTime.Now;
     }
 
     public async IAsyncEnumerable<AssignmentModel> GetAssignments(IEnumerable<SiteModel>? sites = null, bool refresh = true)
@@ -384,7 +403,7 @@ public class KULMSApiService
 
     private async Task PeriodicRefresh(CancellationToken ct)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(30));
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(GlobalSetting.Settings.RefreshSpan));
         while (await timer.WaitForNextTickAsync(ct))
         {
             if (!LoginStatus)
@@ -394,7 +413,9 @@ public class KULMSApiService
             try
             {
                 await RefreshSites();
+                SitesUpdated?.Invoke();
                 await RefreshAssignments();
+                AssignmentsUpdated?.Invoke();
             }
             catch
             {

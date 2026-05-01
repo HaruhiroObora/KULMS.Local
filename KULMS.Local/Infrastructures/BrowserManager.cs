@@ -84,6 +84,8 @@ public class BrowserManager
                 if (skip is null)
                 {
                     driver?.Manage().Cookies.AddCookie(c);
+                    Console.WriteLine(c.Name);
+                    Console.WriteLine(c.Domain);
                 }
                 else if (!skip.Contains(c.Name))
                 {

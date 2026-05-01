@@ -63,6 +63,8 @@ public class Settings
     public string AssignmentPath { get; set; } = "/direct/assignment/my.xml";
     public string AssignmentSitePath { get; set; } = "/direct/assignment/site/{0}.xml";
 
+    public int RefreshSpan { get; set; } = 5;
+
     public static string? GetChromePath()
     {
         if (OperatingSystem.IsWindows())
