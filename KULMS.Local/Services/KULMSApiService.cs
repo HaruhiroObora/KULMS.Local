@@ -84,7 +84,7 @@ public class KULMSApiService
         cts.Cancel();
     }
 
-    private async Task RefreshSites()
+    public async Task RefreshSites()
     {
         List<SiteModel> newSites = [];
         int counter;
@@ -121,6 +121,8 @@ public class KULMSApiService
         } while (counter == siteLimit);
         sites = newSites;
         sitesUpdate = DateTime.Now;
+
+        SitesUpdated?.Invoke();
     }
 
     public async IAsyncEnumerable<SiteModel> GetSites(bool refresh = true)
@@ -247,7 +249,7 @@ public class KULMSApiService
         files = newFiles;
     }
 
-    private async Task RefreshAssignments()
+    public async Task RefreshAssignments()
     {
         List<AssignmentModel> newAssignments = [];
 
@@ -296,6 +298,8 @@ public class KULMSApiService
         }
         assignments = newAssignments;
         assignmentsUpdate = DateTime.Now;
+        
+        AssignmentsUpdated?.Invoke();
     }
 
     public async IAsyncEnumerable<AssignmentModel> GetAssignments(IEnumerable<SiteModel>? sites = null, bool refresh = true)
@@ -413,9 +417,7 @@ public class KULMSApiService
             try
             {
                 await RefreshSites();
-                SitesUpdated?.Invoke();
                 await RefreshAssignments();
-                AssignmentsUpdated?.Invoke();
             }
             catch
             {

@@ -177,7 +177,7 @@ public partial class ContentsTabViewModel : ViewModelBase
     [RelayCommand]
     public async Task ChangeDirectory()
     {
-        await ChangeDirectory(null, false);
+        await ChangeDirectory(null, true);
     }
 
     public async Task ChangeDirectory(IAsyncEnumerable<FileModelBase>? files = null, bool refresh = false)

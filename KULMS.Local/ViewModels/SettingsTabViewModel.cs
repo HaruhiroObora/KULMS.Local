@@ -42,5 +42,7 @@ public partial class SettingsTabViewModel : ViewModelBase
     public async Task ReLogin()
     {
         await KULMSApi.Login();
+        await KULMSApi.RefreshSites();
+        await KULMSApi.RefreshAssignments();
     }
 }
