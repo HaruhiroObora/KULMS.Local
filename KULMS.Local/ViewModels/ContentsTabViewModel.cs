@@ -36,32 +36,6 @@ public partial class ContentsTabViewModel : ViewModelBase
     public ContentsTabViewModel()
     {
         KULMSApi.SitesUpdated += async () => await SitesRefresh();
-        _ = Initialize();
-    }
-
-    public async Task Initialize()
-    {
-        List<SiteModel> sites;
-        try
-        {
-            sites = await KULMSApi.GetSites().ToListAsync(CancellationToken.None);
-            foreach (var s in sites)
-            {
-                int idx = 0;
-                foreach (var site in Sites)
-                {
-                    if (string.Compare(WeekDayToInt(site.Title), WeekDayToInt(s.Title)) == 1)
-                    {
-                        break;
-                    }
-                    idx++;
-                }
-                await Dispatcher.UIThread.InvokeAsync(() => Sites.Insert(idx, s));
-            }
-        }
-        catch
-        {
-        }
     }
 
     private async Task SitesRefresh()
