@@ -211,9 +211,9 @@ public partial class ContentsTabViewModel : ViewModelBase
             browsedDirectory = dir is not null ? new DirectoryViewModel(dir, this) : null;
         }
         var filtered = Syncer.DirectoryFilter(files, CurrentDirectory);
-        await Syncer.CheckDownloaded(filtered);
+        var check = Syncer.CheckDownloaded(filtered);
         await Dispatcher.UIThread.InvokeAsync(Files.Clear);
-        await foreach (var f in filtered)
+        await foreach (var f in check)
         {
             if (f is FileModel fileModel)
             {

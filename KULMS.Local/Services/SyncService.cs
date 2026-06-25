@@ -17,7 +17,7 @@ namespace KULMS.Local.Services;
 public interface ISyncService
 {
     public IAsyncEnumerable<FileModelBase> DirectoryFilter(IAsyncEnumerable<FileModelBase> files, string path);
-    public Task CheckDownloaded(IAsyncEnumerable<FileModelBase> files);
+    public IAsyncEnumerable<FileModelBase> CheckDownloaded(IAsyncEnumerable<FileModelBase> files);
     public void OpenFile(FileModel file);
     public Task Download(FileModel file, string? customPath = null, bool statusChange = true);
     public Task DownloadAll(SiteModel site, DirectoryModel directory, bool chain = false, bool refresh = false);
@@ -43,7 +43,7 @@ public class SyncService : ISyncService
         }
     }
 
-    public async Task CheckDownloaded(IAsyncEnumerable<FileModelBase> files)
+    public async IAsyncEnumerable<FileModelBase> CheckDownloaded(IAsyncEnumerable<FileModelBase> files)
     {
         await foreach (var f in files)
         {
@@ -55,6 +55,7 @@ public class SyncService : ISyncService
             {
                 fileModel.DownloadStatus = Path.Exists(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, fileModel.Path)) ? Status.Offline : Status.Cloud;
             }
+            yield return f;
         }
     }
 
@@ -172,8 +173,8 @@ public class SyncService : ISyncService
     {
         var files = KULMSApi.GetFiles(site, refresh);
         var filtered = Syncer.DirectoryFilter(files, directory.Path);
-        await Syncer.CheckDownloaded(filtered);
-        var fileList = await filtered.ToListAsync();
+        var check = Syncer.CheckDownloaded(filtered);
+        var fileList = await check.ToListAsync();
         foreach (var f in fileList)
         {
             if (f is FileModel file)
