@@ -29,6 +29,7 @@ public partial class AssignmentTabViewModel : ViewModelBase
     public AssignmentTabViewModel()
     {
         KULMSApi.AssignmentsUpdated += async () => await LoadAssignments(false);
+        _ = LoadAssignments();
     }
 
     [RelayCommand]
