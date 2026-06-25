@@ -7,7 +7,7 @@
              x:Class="KULMS.Local.Views.SettingsTab"
              x:DataType="vm:SettingsTabViewModel">
 
-  <Grid RowDefinitions="*,Auto" VerticalAlignment="Top">
+  <Grid RowDefinitions="*,Auto,Auto" VerticalAlignment="Top">
     <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="0">
       <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
         <TextBlock Text="授業資料の保存先" FontSize="20"/>
@@ -27,6 +27,8 @@
       </StackPanel>
     </ScrollViewer>
     <Button Content="保存" Command="{Binding SaveSettings}" FontSize="20" Padding="20,5" Margin="5,8,0,5" Grid.Row="1"/>
+
+    <Button Content="再ログイン" Command="{Binding ReLogin}" FontSize="20" Padding="20,5" Margin="5,8,0,5" Grid.Row="2"/>
   </Grid>
 
 

@@ -1,8 +1,10 @@
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using static KULMS.Local.Services.GlobalSettings;
+using static KULMS.Local.Services.KULMSApiService;
 
 namespace KULMS.Local.ViewModels;
 
@@ -34,5 +36,11 @@ public partial class SettingsTabViewModel : ViewModelBase
         GlobalSetting.Settings.RefreshSpan = RefreshSpan ?? 5;
 
         GlobalSetting.SaveSettings();
+    }
+
+    [RelayCommand]
+    public async Task ReLogin()
+    {
+        await KULMSApi.Login();
     }
 }
