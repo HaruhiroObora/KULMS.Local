@@ -12,6 +12,7 @@ using KULMS.Local.Models;
 
 using static KULMS.Local.Services.KULMSApiService;
 using static KULMS.Local.Services.SyncService;
+using static KULMS.Local.Services.LocalContentsService;
 
 namespace KULMS.Local.ViewModels;
 
@@ -29,6 +30,9 @@ public partial class ContentsTabViewModel : ViewModelBase
     [ObservableProperty]
     public partial SiteModel? SelectedSite { get; set; }
 
+    [ObservableProperty]
+    public partial bool? ShowPinnedSite { get; set; } = true;
+
     public SiteModel? browsedSite;
 
     public DirectoryViewModel? browsedDirectory;
@@ -44,7 +48,7 @@ public partial class ContentsTabViewModel : ViewModelBase
         List<SiteModel> sites;
         try
         {
-            sites = await KULMSApi.GetSites().ToListAsync(CancellationToken.None);
+            sites = await LocalService.FilterSites(KULMSApi.GetSites()).ToListAsync(CancellationToken.None);
             foreach (var s in sites)
             {
                 int idx = 0;
@@ -64,11 +68,21 @@ public partial class ContentsTabViewModel : ViewModelBase
         }
     }
 
-    private async Task SitesRefresh()
+    [RelayCommand]
+    public async Task SitesRefresh()
     {
         try
         {
-            var sites = await KULMSApi.GetSites(false).ToListAsync(CancellationToken.None);
+            IAsyncEnumerable<SiteModel> sitesEnum;
+            if (ShowPinnedSite ?? true)
+            {
+                sitesEnum = LocalService.FilterSites(KULMSApi.GetSites(false));
+            }
+            else
+            {
+                sitesEnum = KULMSApi.GetSites(false);
+            }
+            var sites = await sitesEnum.ToListAsync(CancellationToken.None);
 
             List<SiteModel> removeSites = [];
 
@@ -104,6 +118,14 @@ public partial class ContentsTabViewModel : ViewModelBase
         catch
         {
         }
+    }
+
+    [RelayCommand]
+    public async Task ChangeShown(SiteModel site)
+    {
+        site.Shown = !site.Shown;
+        LocalService.UpdateSiteFilter(site.Id, (bool)site.Shown!);
+        await SitesRefresh();
     }
 
     [RelayCommand]

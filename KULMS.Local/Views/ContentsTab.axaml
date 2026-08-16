@@ -8,6 +8,12 @@
              x:Class="KULMS.Local.Views.ContentsTab"
              x:DataType="vm:ContentsTabViewModel">
 
+  <UserControl.Styles>
+    <Style Selector="TextBlock.is-unpinned">
+      <Setter Property="Foreground" Value="gray" />
+    </Style>
+  </UserControl.Styles>
+
   <Grid RowDefinitions="Auto,*">
     <Grid.KeyBindings>
       <KeyBinding Gesture="Alt+Up" Command="{Binding GoToUpperDirectory}"/>
@@ -27,25 +33,33 @@
       </Grid>
     </Grid>
     <Grid ColumnDefinitions="Auto,*" Grid.Row="1">
-      <ListBox ItemsSource="{Binding Sites}" SelectedItem="{Binding SelectedSite}" Focusable="True" Grid.Column="0" IsTabStop="True" Margin="4">
-        <ListBox.KeyBindings>
-          <KeyBinding Gesture="Enter" Command="{Binding SiteEnterPressed}"/>
-        </ListBox.KeyBindings>
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <Border Padding="0" Margin="0" BorderThickness="1">
-              <Grid Background="Transparent" Tapped="SiteClicked" ColumnDefinitions="*" Margin="0">
-                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" FontSize="15" Margin="4,8"/>
-              </Grid>
-            </Border>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-        <ListBox.Styles>
-          <Style Selector="ListBoxItem">
-            <Setter Property="Padding" Value="0"/>
-          </Style>
-        </ListBox.Styles>
-      </ListBox>
+      <Grid RowDefinitions="*,Auto" Grid.Row="1">
+        <ListBox ItemsSource="{Binding Sites}" SelectedItem="{Binding SelectedSite}" Focusable="True" Grid.Row="0" IsTabStop="True" Margin="4">
+          <ListBox.KeyBindings>
+            <KeyBinding Gesture="Enter" Command="{Binding SiteEnterPressed}"/>
+          </ListBox.KeyBindings>
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Border Padding="0" Margin="0" BorderThickness="1">
+                <Grid Background="Transparent" Tapped="SiteClicked" ColumnDefinitions="*" Margin="0">
+                  <TextBlock Text="{Binding Title}" VerticalAlignment="Center" FontSize="15" Margin="4,8" Classes.is-unpinned="{Binding !Shown}"/>
+                  <Grid.ContextMenu>
+                    <ContextMenu>
+                      <MenuItem Header="ピン止めの切り替え" Command="{Binding $parent[UserControl].((vm:ContentsTabViewModel)DataContext).ChangeShown}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                  </Grid.ContextMenu>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+          <ListBox.Styles>
+            <Style Selector="ListBoxItem">
+              <Setter Property="Padding" Value="0"/>
+            </Style>
+          </ListBox.Styles>
+        </ListBox>
+        <ToggleSwitch OnContent="ピン止めしたサイトのみ表示" OffContent="すべてのサイトを表示" IsChecked="{Binding ShowPinnedSite}" Grid.Row="1" Command="{Binding SitesRefresh}" FontSize="15" Margin="6,2" VerticalAlignment="Center"/>
+      </Grid>
       <ListBox ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}" Focusable="True" Grid.Column="1" IsTabStop="True" Margin="4">
         <ListBox.KeyBindings>
           <KeyBinding Gesture="Enter" Command="{Binding ListEnterPressed}"/>
