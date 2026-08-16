@@ -39,10 +39,15 @@ public class LocalContentsService : ILocalContentsService
                     s.Shown = true;
                     yield return s;
                 }
+                else
+                {
+                    s.Shown = false;
+                }
             }
             else
             {
                 UpdateSiteFilter(s.Id, false);
+                s.Shown = false;
             }
         }
     }
