@@ -1,12 +1,39 @@
 # KULMS.Local
 KULMSの授業資料をまとめてダウンロードするためのアプリです．
 
-## Releases
-[Windows](https://github.com/HaruhiroObora/KULMS.Local/releases/download/v1.0.0-beta/win-x64.zip)
+## ビルド・インストール手順
+このリポジトリのソースコードからアプリケーションを自前でビルド・実行する手順です。
 
-[MacOS](https://github.com/HaruhiroObora/KULMS.Local/releases/download/v1.0.0-beta/osx-arm64.zip)
+---
 
-[Linux](https://github.com/HaruhiroObora/KULMS.Local/releases/download/v1.0.0-beta/linux-x64.zip)
+### 1. 前提条件
 
-## インストール手順
-Releasesのリンクからzipをダウンロードして，展開してください．KULMS.Local(.exe)を開けば実行できます．
+**.NET SDK** (10.0 推奨)
+  - インストール確認:
+    ```bash
+    dotnet --version
+    ```
+
+### 2. リポジトリのクローン
+```bash
+git clone https://github.com/HaruhiroObora/KULMS.Local.git
+cd KULMS.Local
+```
+
+### 3. 単一ファイルでの発行・ビルド
+実行用のバイナリを生成するコマンドです。
+
+Linux (x64)
+```bash
+dotnet publish -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o ./dist/linux-x64
+```
+
+Windows (x64)
+```bash
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./dist/win-x64
+```
+
+macOS (arm64)
+```bash
+dotnet publish src/YourApp.Desktop -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true -o ./dist/osx-arm64
+```
