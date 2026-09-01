@@ -8,6 +8,9 @@ using KULMS.Local.Models;
 
 using static KULMS.Local.Services.SyncService;
 using static KULMS.Local.Services.TopLevelService;
+using static KULMS.Local.Services.GlobalSettings;
+using KULMS.Local.Services;
+using Avalonia.Input;
 
 namespace KULMS.Local.ViewModels;
 
@@ -71,6 +74,22 @@ public partial class FileViewModel : FileViewModelBase
         if (file != null)
         {
             await Syncer.Download(FileModel, file.Path.LocalPath, false);
+        }
+    }
+
+    public async Task DoDragAsync(PointerPressedEventArgs e)
+    {
+        if (FileModel.DownloadStatus != Status.Offline)
+        {
+            return;
+        }
+        var path = Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, FileModel.Path);
+        var file = await TopLevelServiceProvider.GetFileFromPath(path);
+        if (file != null)
+        {
+            var dragData = new DataTransfer();
+            dragData.Add(DataTransferItem.CreateFile(file));
+            var result = await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Copy|DragDropEffects.Move|DragDropEffects.Link);
         }
     }
 }
