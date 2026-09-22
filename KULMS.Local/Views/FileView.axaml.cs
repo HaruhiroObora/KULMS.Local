@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Threading;
 using KULMS.Local.ViewModels;
 
 namespace KULMS.Local.Views;

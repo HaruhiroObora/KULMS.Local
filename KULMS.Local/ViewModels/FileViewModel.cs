@@ -9,7 +9,6 @@ using KULMS.Local.Models;
 using static KULMS.Local.Services.SyncService;
 using static KULMS.Local.Services.TopLevelService;
 using static KULMS.Local.Services.GlobalSettings;
-using KULMS.Local.Services;
 using Avalonia.Input;
 
 namespace KULMS.Local.ViewModels;
