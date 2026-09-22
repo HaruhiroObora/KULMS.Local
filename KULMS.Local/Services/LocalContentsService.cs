@@ -46,8 +46,9 @@ public class LocalContentsService : ILocalContentsService
             }
             else
             {
-                UpdateSiteFilter(s.Id, false);
-                s.Shown = false;
+                UpdateSiteFilter(s.Id, true);
+                s.Shown = true;
+                yield return s;
             }
         }
     }
