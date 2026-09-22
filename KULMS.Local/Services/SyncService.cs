@@ -36,7 +36,7 @@ public class SyncService : ISyncService
     {
         await foreach (var f in files)
         {
-            if (f.Parent == path)
+            if (SanitizeFileName(f.Parent) == path)
             {
                 yield return f;
             }
@@ -59,14 +59,14 @@ public class SyncService : ISyncService
         }
     }
 
-    private FileStream GetDownloadStream(FileModel file)
-    {
-        if (!Path.Exists(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Parent)))
-        {
-            Directory.CreateDirectory(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Parent));
-        }
-        return new FileStream(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Path), FileMode.Create, FileAccess.Write);
-    }
+    // private FileStream GetDownloadStream(FileModel file)
+    // {
+    //     if (!Path.Exists(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Parent)))
+    //     {
+    //         Directory.CreateDirectory(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Parent));
+    //     }
+    //     return new FileStream(Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, file.Path), FileMode.Create, FileAccess.Write);
+    // }
 
     private FileStream GetDownloadStream(string path)
     {
@@ -208,6 +208,18 @@ public class SyncService : ISyncService
 </html>";
 
         File.WriteAllText(fullPath, content.Trim(), Encoding.UTF8);
+    }
+
+    public static string SanitizeFileName(string name)
+    {
+        return name
+            .Replace(':', '：')
+            .Replace('*', '＊')
+            .Replace('?', '？')
+            .Replace('"', '”')
+            .Replace('<', '＜')
+            .Replace('>', '＞')
+            .Replace('|', '｜');
     }
 
     public void OpeninFileApp(FileModelBase file)

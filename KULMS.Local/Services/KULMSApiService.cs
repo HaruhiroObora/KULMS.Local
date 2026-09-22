@@ -12,6 +12,7 @@ using KULMS.Local.Infrastructures;
 using KULMS.Local.Models;
 
 using static KULMS.Local.Services.GlobalSettings;
+using static KULMS.Local.Services.SyncService;
 
 namespace KULMS.Local.Services;
 
@@ -376,7 +377,7 @@ public class KULMSApiService
         }
         foreach (var d in directories)
         {
-            if (d.Parent == path)
+            if (SanitizeFileName(d.Parent) == path)
             {
                 return d;
             }

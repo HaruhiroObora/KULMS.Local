@@ -148,7 +148,7 @@ public partial class ContentsTabViewModel : ViewModelBase
     {
         if (SelectedSite is SiteModel site)
         {
-            CurrentDirectory = site.Title;
+            CurrentDirectory = SanitizeFileName(site.Title);
             browsedSite = site;
             SelectedFile = null;
             browsedDirectory = null;
