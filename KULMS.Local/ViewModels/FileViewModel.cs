@@ -78,17 +78,23 @@ public partial class FileViewModel : FileViewModelBase
 
     public async Task DoDragAsync(PointerPressedEventArgs e)
     {
-        if (FileModel.DownloadStatus != Status.Offline)
-        {
-            return;
+        try {
+            if (FileModel.DownloadStatus != Status.Offline)
+            {
+                return;
+            }
+            var path = Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, FileModel.Path);
+            var file = await TopLevelServiceProvider.GetFileFromPath(path);
+            if (file != null)
+            {
+                var dragData = new DataTransfer();
+                dragData.Add(DataTransferItem.CreateFile(file));
+                var result = await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Copy | DragDropEffects.Link);
+            }
         }
-        var path = Path.Combine(GlobalSetting.Settings.LocalDirectoryPrefix, FileModel.Path);
-        var file = await TopLevelServiceProvider.GetFileFromPath(path);
-        if (file != null)
+        catch
         {
-            var dragData = new DataTransfer();
-            dragData.Add(DataTransferItem.CreateFile(file));
-            var result = await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Copy|DragDropEffects.Move|DragDropEffects.Link);
+            
         }
     }
 }
