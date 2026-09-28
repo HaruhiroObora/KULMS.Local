@@ -41,6 +41,7 @@ public partial class FileView : UserControl
         {
             return;
         }
+        pointerPressed = false;
         await ((FileViewModel?)DataContext)!.DoDragAsync(pressedEvent!);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
 using System;
-using System.Linq;
 
 namespace KULMS.Local;
 
@@ -11,20 +10,13 @@ sealed class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) 
-    {
-        if (OperatingSystem.IsLinux() && !args.Contains("--avalonia-use-x11"))
-        {
-            args = args.Append("--avalonia-use-x11").ToArray();
-        }
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-    }
+    public static void Main(string[] args)
+        => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .With(new X11PlatformOptions{})
             .WithInterFont()
             .With(new FontManagerOptions
             {
