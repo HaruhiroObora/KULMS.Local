@@ -1,3 +1,5 @@
+using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using KULMS.Local.ViewModels;
@@ -8,6 +10,8 @@ public partial class FileView : UserControl
 {
     private bool pointerPressed = false;
     private PointerPressedEventArgs? pressedEvent = null;
+    private Point? _startPoint = null;
+    private const int DragThreshold = 4;
 
     public FileView()
     {
@@ -23,6 +27,7 @@ public partial class FileView : UserControl
     {
         pointerPressed = true;
         pressedEvent = e;
+        _startPoint = e.GetPosition(this);
     }
 
     private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
@@ -38,6 +43,12 @@ public partial class FileView : UserControl
     private async void OnPointerMoved(object? sender, PointerEventArgs e)
     {
         if (!pointerPressed)
+        {
+            return;
+        }
+        var currentPoint = e.GetPosition(this);
+        var diff = (Point)(currentPoint - _startPoint)!;
+        if (Math.Abs(diff.X) < DragThreshold && Math.Abs(diff.Y) < DragThreshold)
         {
             return;
         }
