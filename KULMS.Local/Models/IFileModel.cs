@@ -1,6 +1,5 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
-using static KULMS.Local.Services.SyncService;
 
 namespace KULMS.Local.Models;
 

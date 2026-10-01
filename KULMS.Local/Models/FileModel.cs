@@ -1,6 +1,3 @@
-using System;
-using static KULMS.Local.Services.SyncService;
-
 namespace KULMS.Local.Models;
 
 public class FileModel : FileModelBase
