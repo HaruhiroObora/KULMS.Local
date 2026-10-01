@@ -184,7 +184,7 @@ public class KULMSApiService
                     var pathAsContainer = WebUtility.UrlDecode(c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain + GlobalSetting.Settings.FilePath + GlobalSetting.Settings.FileRootPath, "").ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
                     if (urlPathToPath.TryGetValue(Path.GetDirectoryName(pathAsContainer)!.Replace("\\", "/"), out var parentPath))
                     {
-                        urlPathToPath.Add(pathAsContainer, Path.Combine(parentPath, c.Element("title")!.Value));
+                        urlPathToPath.Add(pathAsContainer, Path.Combine(parentPath, SanitizeFileName(c.Element("title")!.Value)));
                     }
                     else
                     {
@@ -195,7 +195,7 @@ public class KULMSApiService
                     (
                         new DirectoryModel
                         {
-                            Name = c.Element("title")!.Value,
+                            Name = SanitizeFileName(c.Element("title")!.Value),
                             Type = string.Empty,
                             UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
                             Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
@@ -210,7 +210,7 @@ public class KULMSApiService
                     (
                         new URLModel
                         {
-                            Name = Path.GetFileNameWithoutExtension(c.Element("title")!.Value),
+                            Name = SanitizeFileName(Path.GetFileNameWithoutExtension(c.Element("title")!.Value)),
                             Type = Path.GetExtension(c.Element("url")!.Value).AsSpan().TrimStart(".").ToString(),
                             UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
                             Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
@@ -225,7 +225,7 @@ public class KULMSApiService
                     (
                         new FileModel
                         {
-                            Name = Path.GetFileNameWithoutExtension(c.Element("title")!.Value),
+                            Name = SanitizeFileName(Path.GetFileNameWithoutExtension(c.Element("title")!.Value)),
                             Type = Path.GetExtension(c.Element("url")!.Value).AsSpan().TrimStart(".").ToString(),
                             UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
                             Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
@@ -377,7 +377,7 @@ public class KULMSApiService
         }
         foreach (var d in directories)
         {
-            if (SanitizeFileName(d.Parent) == path)
+            if (d.Parent == path)
             {
                 return d;
             }

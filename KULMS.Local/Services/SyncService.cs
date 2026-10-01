@@ -36,7 +36,7 @@ public class SyncService : ISyncService
     {
         await foreach (var f in files)
         {
-            if (SanitizeFileName(f.Parent) == path)
+            if (f.Parent == path)
             {
                 yield return f;
             }
@@ -219,7 +219,9 @@ public class SyncService : ISyncService
             .Replace('"', '”')
             .Replace('<', '＜')
             .Replace('>', '＞')
-            .Replace('|', '｜');
+            .Replace('|', '｜')
+            .Replace("/", "／")
+            .Replace("\\", "＼");
     }
 
     public void OpeninFileApp(FileModelBase file)

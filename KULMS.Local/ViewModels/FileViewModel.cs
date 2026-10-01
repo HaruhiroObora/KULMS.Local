@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Input;
 using KULMS.Local.Models;
@@ -21,8 +20,6 @@ public partial class FileViewModel : FileViewModelBase
     public string? Type { get => FileModel?.Type; }
     public DateTime? LastModified { get => FileModel?.LastModified; }
     public Status? DownloadStatus { get => FileModel?.DownloadStatus; }
-
-    public TopLevel? topLevel;
 
     public FileViewModel(FileModel model)
     {
@@ -78,7 +75,8 @@ public partial class FileViewModel : FileViewModelBase
 
     public async Task DoDragAsync(PointerPressedEventArgs e)
     {
-        try {
+        try
+        {
             if (FileModel.DownloadStatus != Status.Offline)
             {
                 return;
