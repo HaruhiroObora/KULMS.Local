@@ -200,7 +200,7 @@ public class KULMSApiService
                             UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
                             Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
                             DownloadStatus = Status.Folder,
-                            LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture).AddHours(9)
+                            LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture).Add(TimeZoneInfo.Local.GetUtcOffset(DateTime.Now))
                         }
                     );
                 }
@@ -214,7 +214,7 @@ public class KULMSApiService
                             Type = Path.GetExtension(c.Element("url")!.Value).AsSpan().TrimStart(".").ToString(),
                             UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
                             Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
-                            LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture).AddHours(9),
+                            LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture).Add(TimeZoneInfo.Local.GetUtcOffset(DateTime.Now)),
                             URL = c.Element("webLinkUrl")!.Value
                         }
                     );
@@ -229,7 +229,7 @@ public class KULMSApiService
                             Type = Path.GetExtension(c.Element("url")!.Value).AsSpan().TrimStart(".").ToString(),
                             UrlPath = c.Element("url")!.Value.Replace(GlobalSetting.Settings.Domain, "").ToString(),
                             Parent = urlPathToPath[RemoveStart(c.Element("container")!.Value, GlobalSetting.Settings.FileRootPath).ToString().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)],
-                            LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture).AddHours(9)
+                            LastModified = DateTime.ParseExact(c.Element("modifiedDate")!.Value, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture).Add(TimeZoneInfo.Local.GetUtcOffset(DateTime.Now))
                         }
                     );
                 }
