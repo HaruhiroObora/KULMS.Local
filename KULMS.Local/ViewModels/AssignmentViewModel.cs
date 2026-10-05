@@ -34,6 +34,6 @@ public partial class AssignmentViewModel(AssignmentModel model) : ViewModelBase
     [RelayCommand]
     public async Task ChangeShown()
     {
-        AssignmentManager.UpdateAssignmentFilter(AssignmentModel.Id);
+        AssignmentManager.UpdateAssignmentFilter(AssignmentModel.Id, AssignmentModel.SubmissionStatus != SubmissionStatus.NotStarted && AssignmentModel.SubmissionStatus != SubmissionStatus.UnderWay);
     }
 }

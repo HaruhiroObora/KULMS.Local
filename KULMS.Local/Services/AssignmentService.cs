@@ -26,14 +26,14 @@ public class AssignmentService
     {
         await foreach (var a in assignments)
         {
-            if (key(a) || (submittionFilter.ContainsKey(a.Id) ? submittionFilter[a.Id] : false))
+            if (submittionFilter.GetValueOrDefault(a.Id, key(a)))
             {
                 yield return a;
             }
         }
     }
 
-    public async void UpdateAssignmentFilter(string id)
+    public async void UpdateAssignmentFilter(string id, bool show)
     {
         if (submittionFilter.ContainsKey(id))
         {
@@ -41,7 +41,7 @@ public class AssignmentService
         }
         else
         {
-            submittionFilter[id] = false;
+            submittionFilter[id] = show;
         }
         await SaveFilter();
         AssignmentStateUpdated?.Invoke();
