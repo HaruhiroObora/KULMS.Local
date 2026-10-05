@@ -5,7 +5,9 @@
         x:Class="KULMS.Local.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="KULMS.Local">
+        Title="KULMS.Local"
+        Width="1200"
+        Height="800">
 
   <Design.DataContext>
     <!-- This only sets the DataContext for the previewer in an IDE,

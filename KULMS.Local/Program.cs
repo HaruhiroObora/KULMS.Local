@@ -2,6 +2,8 @@
 using Avalonia.Media;
 using System;
 
+using static KULMS.Local.Services.GlobalSettings;
+
 namespace KULMS.Local;
 
 sealed class Program
@@ -15,19 +17,21 @@ sealed class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
-            .UsePlatformDetect()
-            .WithInterFont()
-            .With(new FontManagerOptions
-            {
-                FontFallbacks =
-            [
-                new FontFallback { FontFamily = new FontFamily("Noto Sans CJK JP") },
+    {
+        var appBuilder = AppBuilder.Configure<App>().UsePlatformDetect();
+        if (GlobalSetting.Settings.UseWayland) appBuilder = appBuilder.UseWayland();
+        return appBuilder.WithInterFont()
+        .With(new FontManagerOptions
+        {
+            FontFallbacks =
+        [
+            new FontFallback { FontFamily = new FontFamily("Noto Sans CJK JP") },
                 new FontFallback { FontFamily = new FontFamily("Segoe UI") },
                 new FontFallback { FontFamily = new FontFamily("Hiragino Sans") },
                 new FontFallback { FontFamily = new FontFamily("Ubuntu") },
                 new FontFallback { FontFamily = new FontFamily("Meiryo") },
-            ]
-            })
-            .LogToTrace();
+        ]
+        })
+        .LogToTrace();
+    }
 }

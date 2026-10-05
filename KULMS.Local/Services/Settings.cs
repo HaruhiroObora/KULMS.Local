@@ -65,6 +65,8 @@ public class Settings
 
     public int RefreshSpan { get; set; } = 5;
 
+    public bool UseWayland { get; set; } = false;
+
     public static string? GetChromePath()
     {
         if (OperatingSystem.IsWindows())

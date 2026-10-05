@@ -22,7 +22,11 @@ public partial class SettingsTabViewModel : ViewModelBase
     public partial bool SiteRefresh { get; set; } = GlobalSetting.Settings.SiteRefresh;
     [ObservableProperty]
     public partial int? RefreshSpan { get; set; } = GlobalSetting.Settings.RefreshSpan;
+    [ObservableProperty]
+    public partial bool UseWayland { get; set; } = GlobalSetting.Settings.UseWayland;
 
+    [ObservableProperty]
+    public partial bool IsLinux { get; set; } = OperatingSystem.IsLinux();
 
 
     [RelayCommand]
@@ -34,6 +38,7 @@ public partial class SettingsTabViewModel : ViewModelBase
         GlobalSetting.Settings.LocalDirectoryPrefix = LocalDirectoryPrefix;
         GlobalSetting.Settings.SiteRefresh = SiteRefresh;
         GlobalSetting.Settings.RefreshSpan = RefreshSpan ?? 5;
+        GlobalSetting.Settings.UseWayland = UseWayland;
 
         GlobalSetting.SaveSettings();
     }

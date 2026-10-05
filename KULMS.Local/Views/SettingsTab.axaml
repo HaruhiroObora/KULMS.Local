@@ -21,6 +21,8 @@
           <TextBlock Text="更新間隔(分)" FontSize="18"/>
           <NumericUpDown Minimum="1" Increment="1" FormatString="0" Value="{Binding RefreshSpan, TargetNullValue=5}" FontSize="15" ShowButtonSpinner="False" ParsingNumberStyle="Integer" Margin="8,0"/>
         </StackPanel>
+        <TextBlock Text="Waylandを使用する(次回の起動から反映)" FontSize="20" Margin="0,8,0,0" IsVisible="{Binding IsLinux}"/>
+        <ToggleSwitch OnContent="有効" OffContent="無効" IsChecked="{Binding UseWayland}" FontSize="20" Margin="8,0,0,0" IsVisible="{Binding IsLinux}"/>
       </StackPanel>
     </ScrollViewer>
     <Button Content="保存" Command="{Binding SaveSettings}" FontSize="20" Padding="20,5" Margin="5,8,0,5" Grid.Row="1"/>
